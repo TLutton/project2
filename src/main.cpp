@@ -241,10 +241,32 @@ main(int argc, char** argv)
 	for (PeerInfo i : pi)
 	{
 		std::cout << i.ip + ":" << i.port << std::endl;
+		int peerfd = socket(AF_INET, SOCK_STREAM, 0);          
+		struct sockaddr_in peerAddr;
+		peerAddr.sin_family = AF_INET;
+		peerAddr.sin_port = htons(i.port);     // short, network byte order
+		peerAddr.sin_addr.s_addr = inet_addr(i.ip);
+		// connect to the server
+		if (connect(peerfd, (struct sockaddr *)peerAddr, sizeof(peerAddr)) == -1) {
+			perror("connect");
+			return 2;
+		}
+		
+			// make a handshake to send
+		HandShake handjob(encodedHash, "SIMPLEBT.TEST.PEERID"); // m_encodedHash corresponds to encodedHash in main.cpp
+		ConstBufferPtr hjBufPtr = handjob.encode();
+		
+		if(send(peerfd, handjob, (*hjBufPtr).size(), 0) < 0)
+		{
+			perror("send handshake");
+			return; //8;
+		}
+
+		
 	} 
 
-
-
+	//Eventually incorperate
+	
 
 
 //START PART 2 CODE: P2P service 
@@ -461,3 +483,45 @@ main(int argc, char** argv)
 
 return 0;
 }
+
+
+/*
+void
+Client::sendHandshake(int fd, std::string encodedHash) 
+{
+	// make a handshake to send
+	msg::HandShake handjob(encodedHash, "SIMPLEBT.TEST.PEERID"); // m_encodedHash corresponds to encodedHash in main.cpp
+	ConstBufferPtr hjBufPtr = handjob.encode();
+	
+	if(send(fd, handjob, (*hjBufPtr).size(), 0) < 0)
+	{
+		perror("send handshake");
+		return; //8;
+	}
+}
+
+msg::HandShake
+Client::catchHandshake()
+{
+	int hsSize = 68; // size of handshake
+
+	char hs[hsSize] = {0};
+
+	OBufferStream obuf;
+
+	for(int i = 0; i < hsSize; ++i)
+	{
+		if(recv(m_listenerfd, hs+i, hsSize - i, 0) < 0)
+			perror("recv");
+	}
+
+	obuf.write(hs, hsSize);
+	ConstBufferPtr obufPtr = obuf.buf();
+
+	msg::HandShake handshake;
+	handshake.decode(obufPtr);
+
+	return handshake;
+
+}
+*/
