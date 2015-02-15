@@ -129,7 +129,7 @@ main(int argc, char** argv)
 	}
 
 	std::string encodedHash = url::encode(cbp->get(), v.size());
-	std::string encodedPeer = url::encode(&vp.front(), vp.size());
+	std::string encodedPeer = "SIMPLEBT.TEST.PEERID";
 
 	std::size_t pos = mi.getAnnounce().find("//");
 	std::string host = mi.getAnnounce().substr(pos+2);
