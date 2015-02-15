@@ -237,7 +237,7 @@ main(int argc, char** argv)
 	TrackerResponse tr;
 	tr.decode(theD);
 	std::vector<PeerInfo> pi = tr.getPeers();
-
+/*
 	for (PeerInfo i : pi)
 	{
 		std::cout << i.ip + ":" << i.port << std::endl;
@@ -253,18 +253,20 @@ main(int argc, char** argv)
 		}
 		
 			// make a handshake to send
-		HandShake handjob(encodedHash, "SIMPLEBT.TEST.PEERID"); // m_encodedHash corresponds to encodedHash in main.cpp
+		std::string eyeD = "SIMPLEBT.TEST.PEERID";
+		HandShake handjob(mi.getHash(), eyeD); // m_encodedHash corresponds to encodedHash in main.cpp
 		ConstBufferPtr hjBufPtr = handjob.encode();
+		const char* hjc = reinterpret_cast<const char*>(hjBufPtr->buf());
 		
-		if(send(peerfd, handjob, (*hjBufPtr).size(), 0) < 0)
+		if(send(peerfd, hjc, 68, 0) < 0)
 		{
 			perror("send handshake");
-			return; //8;
+			return 8;
 		}
 
 		
 	} 
-
+*/
 	//Eventually incorperate
 	
 
