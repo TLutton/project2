@@ -245,9 +245,9 @@ main(int argc, char** argv)
 		struct sockaddr_in peerAddr;
 		peerAddr.sin_family = AF_INET;
 		peerAddr.sin_port = htons(i.port);     // short, network byte order
-		peerAddr.sin_addr.s_addr = inet_addr(i.ip);
+		peerAddr.sin_addr.s_addr = inet_addr(i.ip.c_str());
 		// connect to the server
-		if (connect(peerfd, (struct sockaddr *)peerAddr, sizeof(peerAddr)) == -1) {
+		if (connect(peerfd, (struct sockaddr *)&peerAddr, sizeof(peerAddr)) == -1) {
 			perror("connect");
 			return 2;
 		}
