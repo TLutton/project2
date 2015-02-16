@@ -462,7 +462,7 @@ main(int argc, char** argv)
 					FD_SET(clientSockfd, &tmpFds);
 					std::cout << "map: " << std::endl;
 					for (std::map::iterator it=peerToFD.begin(); it!=peerToFD.end(); ++it)
-						 std::cout << it->first << " => " << it->second << '\n';
+						 std::cout << it->first.ip << it->first.port << " => " << it->second << '\n';
 				} 
 				else 
 				{ // this is the normal socket and normal requests
