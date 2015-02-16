@@ -471,7 +471,7 @@ main(int argc, char** argv)
 					}
 					//ss << buf << std::endl;
 
-				
+					std::cout << "WHAT UP MY FRIENDS " << buf[4] << std::endl;
 					// check to see if message is a handshake
 					if (socketStatus[fd] == 0 || socketStatus[fd] == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
