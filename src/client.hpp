@@ -23,6 +23,7 @@
 #define SBT_CLIENT_HPP
 
 #include "common.hpp"
+#include "msg/handshake.hpp"
 
 namespace sbt {
 struct cmpPeer  //comparator for peer info
@@ -47,6 +48,23 @@ class Client
 {
 public:
   Client(const std::string& port, const std::string& torrent);
+  
+  msg::Handshake receiveHandShake(int fd);
+  
+  void sendHandShake(int fd);
+  
+  void receiveMessage(int fd);
+  
+  void setupTrackerRequest();
+  
+  void sendTrackerRequest();
+  
+  bool shouldUpdateTracker();
+  
+  int setupPeerListener();
+  
+  int addPeer(fd_set& tmpFds);
+  
 private:
   
   std::string port;
