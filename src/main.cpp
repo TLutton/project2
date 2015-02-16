@@ -408,6 +408,8 @@ main(int argc, char** argv)
 			perror("select");
 			return 4;
 		}
+		
+		std::cout << "map size: " << socketStatus.size() << std::endl;
 
 		for(int fd = 0; fd <= maxSockfd; fd++) 
 		{
@@ -460,9 +462,7 @@ main(int argc, char** argv)
 					}
 					// add the socket into the socket set
 					FD_SET(clientSockfd, &tmpFds);
-					std::cout << "map: " << std::endl;
-					for (std::map::iterator it=peerToFD.begin(); it!=peerToFD.end(); ++it)
-						 std::cout << it->first.ip << it->first.port << " => " << it->second << '\n';
+				
 				} 
 				else 
 				{ // this is the normal socket and normal requests
