@@ -463,7 +463,6 @@ main(int argc, char** argv)
 					//-----If file is done, send completed event to tracker
 
 					char buf[BUFSIZE] = {0};
-					std::stringstream ss;
 
 					if (recv(fd, buf, BUFSIZE, 0) == -1) 
 					{
@@ -529,7 +528,7 @@ main(int argc, char** argv)
 						
 						std::cout << "socket status = " << socketStatus[fd] << std::endl;
 						std::cout << "STRLEN " << strlen(buf) << std::endl;
-						if (strlen(buf) >= 5) 
+						if (true) 
 						{
 							
 							char pleadTheFifth = *(buf+4);
