@@ -462,10 +462,9 @@ main(int argc, char** argv)
 					//IF we have their bitfield, see if they have a file we want and keep track of that
 					//-----If file is done, send completed event to tracker
 
-					char buf[BUFSIZE];
+					char buf[BUFSIZE] = {0};
 					std::stringstream ss;
 
-					memset(buf, '\0', sizeof(buf));
 					if (recv(fd, buf, BUFSIZE, 0) == -1) 
 					{
 						perror("recv");
