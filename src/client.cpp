@@ -292,9 +292,8 @@ void Client::sendTrackerRequest()
 bool Client::shouldUpdateTracker()
 {
     if(((int)time(0) - (int)lastCheck ) > trInterval) 
-		return true;
-	else
-	    return false;
+	    return true;
+    return false;
 }
 
 int Client::setupPeerListener()
