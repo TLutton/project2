@@ -461,7 +461,7 @@ main(int argc, char** argv)
 					// add the socket into the socket set
 					FD_SET(clientSockfd, &tmpFds);
 					std::cout << "map: " << std::endl;
-					for (std::map<PeerInfo,int, cmpPeer>::iterator it=peerToFD.begin(); it!=peerToFD.end(); ++it)
+					for (std::map::iterator it=peerToFD.begin(); it!=peerToFD.end(); ++it)
 						 std::cout << it->first << " => " << it->second << '\n';
 				} 
 				else 
