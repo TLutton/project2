@@ -25,13 +25,68 @@
 #include "common.hpp"
 
 namespace sbt {
+struct cmpPeer  //comparator for peer info
+{
+    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
+    {
+        int str = a.ip.compare(b.ip);
+        if(str < 0)
+        	return true;
+        else if (str > 0)
+        	return false;
+        else if(a.port < b.port)
+        {
+        	return true;
+        }
+        else
+        	return false;
+    }
+};
 
 class Client
 {
 public:
-  Client(const std::string& port, const std::string& torrent)
-  {
-  }
+  Client(const std::string& port, const std::string& torrent);
+private:
+  
+  std::string port;
+  std::string torrent;
+  
+  //Peer Data
+  std::map<int, int> socketStatus;
+  std::map<PeerInfo, int> peerToFD;
+  int setupPeerListener();
+  bool isPeerConnected(PeerInfo pi); //won't add peer if not connected
+  int getPeerStatus(PeerInfo pi);
+  bool isFDPeer(int fd);
+  int getFDStatus(int fd);
+  void setFDStatus(int fd, int status);
+  void addPeer(PeerInfo pi, int fd);
+  void removePeer();
+  int listenerFD;
+  
+  //Tracker
+  HttpRequest trRequest;
+  void setupTrackerRequest();
+  bool shouldUpdateTracker();
+  void sendTrackerRequest();
+  std::vector<PeerInfo> trackerPeers;
+  int trInterval;
+  time_t lastCheck;
+  
+  MetaInfo torrentInfo;
+  std::string encodedPeer;
+  
+  //receiving data
+  HandShake receiveHandShake(int fd);
+  void sendHandShake(int fd);
+  MsgBase receiveMessage(int fd);
+  HandShake clientHandShake;
+  
+  //file data
+  int uploaded, downloaded;
+  std::string event;
+  
 };
 
 } // namespace sbt
