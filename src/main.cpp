@@ -419,7 +419,7 @@ main(int argc, char** argv)
 				trInterval = tr.getInterval();
 				t = time(0);
 			}
-			std::cout << "loop " << std::endl;
+		
 			// get one socket for reading
 			if (FD_ISSET(fd, &readFds)) 
 			{
