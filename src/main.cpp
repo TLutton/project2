@@ -466,7 +466,7 @@ main(int argc, char** argv)
 					FD_SET(clientSockfd, &tmpFds);
 				
 				} 
-				else if(socketStatus.find(fd) != peerToFD.end())
+				else if(socketStatus.find(fd) != socketStatus.end())
 				{ // this is the normal socket and normal requests
 
 					//FULLFILL WHATEVER REQUEST YOU RECEIVE
