@@ -538,7 +538,7 @@ main(int argc, char** argv)
 						obuf.write(buf, 5);
 						shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
 	*/
-						std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
+						std::cout << "buf: " << buf;
 						
 						
 						std::cout << "socket status = " << socketStatus[fd] << std::endl;
