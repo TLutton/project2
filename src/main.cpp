@@ -529,6 +529,7 @@ main(int argc, char** argv)
 						std::cout << "bufnew: " << bufNew << std::endl;
 						
 						std::cout << "socket status = " << socketStatus[fd] << std::endl;
+						std::cout << "STRLEN " << strlen(buf) << std::endl;
 						if (strlen(buf) >= 5) 
 						{
 							
