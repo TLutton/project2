@@ -531,12 +531,14 @@ main(int argc, char** argv)
 					else if (socketStatus[fd] >= 3)
 					{
 						char buf[5] = {0};
-
-						if (recv(fd, buf, 5, 0) == -1) 
+						int status = 0;
+						if ((status =recv(fd, buf, 5, 0)) == -1) 
 						{
 							perror("recv");
 							return 6;
 						}
+						
+						std::cout << "recv size = " << status << std::endl;
 						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
 					/*	OBufferStream obuf;
 						obuf.put(0);
