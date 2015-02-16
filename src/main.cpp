@@ -462,29 +462,30 @@ main(int argc, char** argv)
 					//IF we have their bitfield, see if they have a file we want and keep track of that
 					//-----If file is done, send completed event to tracker
 
-					char buf[68];
+					char buf[BUFSIZE];
 					std::stringstream ss;
 
 					memset(buf, '\0', sizeof(buf));
-					if (recv(fd, buf, 68, 0) == -1) 
+					if (recv(fd, buf, BUFSIZE, 0) == -1) 
 					{
 						perror("recv");
 						return 6;
 					}
 					//ss << buf << std::endl;
 
-					// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
-					OBufferStream obuf;
-					obuf.put(0);
-					obuf.write(buf, 67);
-					shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
-
-					std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
-					std::cout << "bufnew: " << bufNew << std::endl;
-
+				
 					// check to see if message is a handshake
 					if (socketStatus[fd] == 0 || socketStatus[fd] == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
+						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
+						OBufferStream obuf;
+						obuf.put(0);
+						obuf.write(buf, 67);
+						shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
+	
+						std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
+						std::cout << "bufnew: " << bufNew << std::endl;
+
 						// message be a handshake
 						std::cout << "received handshake" << std::endl;
 						// create an empty Handshake object
@@ -517,7 +518,17 @@ main(int argc, char** argv)
 					}
 					else if (socketStatus[fd] >= 3)
 					{
-							std::cout << "socket status = " << socketStatus[fd] << std::endl;
+						
+						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
+						OBufferStream obuf;
+						obuf.put(0);
+						obuf.write(buf, BUFSIZE);
+						shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
+	
+						std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
+						std::cout << "bufnew: " << bufNew << std::endl;
+						
+						std::cout << "socket status = " << socketStatus[fd] << std::endl;
 						if (strlen(buf) >= 5) 
 						{
 							
