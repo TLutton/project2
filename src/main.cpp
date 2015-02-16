@@ -531,7 +531,7 @@ main(int argc, char** argv)
 						if (true) 
 						{
 							
-							char pleadTheFifth = *(buf+4);
+							char pleadTheFifth = buf[4];
 							uint8_t typeId = (uint8_t)pleadTheFifth;
 							
 							std::cout << "msg type: " << typeId << std::endl;
