@@ -221,6 +221,12 @@ main(int argc, char** argv)
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(std::stoi(port));     // short, network byte order
 	serverAddr.sin_addr.s_addr = inet_addr(ipstr);
+	
+	PeerInfo trackerPI;
+	trackerPI.ip = ipstr;
+	trackerPI.port = std::stoi(port);
+	peerToFD[trackerPI] = -1; //don't check
+	
 	// connect to the server
 	if (connect(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
 		perror("connect");
