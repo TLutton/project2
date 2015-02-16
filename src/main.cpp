@@ -464,7 +464,7 @@ main(int argc, char** argv)
 
 					char buf[68] = {0};
 
-					if (recv(fd, buf, BUFSIZE, 0) == -1) 
+					if (recv(fd, buf, 68, 0) == -1) 
 					{
 						perror("recv");
 						return 6;
