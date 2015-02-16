@@ -10,6 +10,20 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <stdio.h>
+#include <cstdlib>
+#include <cstring>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+
+#include <climits>
+#include <map>
+#include <ctime>
+
 #include "client.hpp"
 #include "meta-info.hpp"
 #include "http/http-request.hpp"
@@ -19,29 +33,31 @@
 #include "msg/handshake.hpp"
 #include "msg/msg-base.hpp"
 #include "http/http-response.hpp"
-#include <fstream>
-#include "common.hpp"
-#include <stdio.h>
-#include <cstdlib>
-#include <cstring>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <iostream>
-#include <sstream>
-#include <netinet/in.h>
 #include "tracker-response.hpp"
-#include <climits>
-#include <map>
-#include <ctime>
+#include "common.hpp"
+
 using namespace sbt;
 using namespace msg;
+
 #define PEERLEN 20
 #define HANDSHAKELEN 68 
+#define BUFSIZE 20000
+
+struct cmpPeer {
+    bool operator()(const PeerInfo& a, const PeerInfo& b) const {
+        int str = a.ip.compare(b.ip);
+        if(str < 0)
+        	return true;
+        else if (str > 0)
+        	return false;
+        else if(a.port < b.port)
+        {
+        	return true;
+        }
+        else
+        	return false;
+    }
+};
 
 
 // returns an int of next piece to grab
@@ -86,9 +102,9 @@ int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr
 	} 
 
 	// receive response
-	char secReqRecBuf[20000];
+	char secReqRecBuf[BUFSIZE];
 	memset(secReqRecBuf, '\0', sizeof(secReqRecBuf));
-	if(recv(secSockfd, secReqRecBuf, 20000, 0) == -1) {
+	if(recv(secSockfd, secReqRecBuf, BUFSIZE, 0) == -1) {
 		perror("receive");
 		return 5;
 	}
@@ -98,7 +114,7 @@ int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr
 	// decipher data from response
 	HttpResponse secHRes;
 	if(secReqRecBuf[0] != 0) 
-		secHRes.parseResponse(secReqRecBuf, 20000);
+		secHRes.parseResponse(secReqRecBuf, BUFSIZE);
 	char *body = strstr(secReqRecBuf, "\r\n\r\n")+4;
 	std::string bodys = body;
 	std::istringstream iss2(bodys);
@@ -125,7 +141,7 @@ main(int argc, char** argv)
 	}	 
 
 	std::map<int, int> socketStatus;
-	std::map<PeerInfo, int> peerToFD;
+	std::map<PeerInfo, int, cmpPeer> peerToFD;
 	//PART 1: TALKING TO THE TRACKER TO INITIALIZE
 
 	std::ifstream ifs (argv[2], std::ifstream::in);
@@ -221,7 +237,7 @@ main(int argc, char** argv)
 	inet_ntop(clientAddr.sin_family, &clientAddr.sin_addr, ipstr1, sizeof(ipstr1));
 
 	std::string input;
-	char buf1[20000] = {0};
+	char buf1[BUFSIZE] = {0};
 	std::stringstream ss;
 
 	memset(buf1, '\0', sizeof(buf1));
@@ -231,7 +247,7 @@ main(int argc, char** argv)
 		return 4;
 	}
 
-	if (recv(sockfd, buf1, 20000, 0) == -1) {
+	if (recv(sockfd, buf1, BUFSIZE, 0) == -1) {
 		perror("recv");
 		return 5;
 	}
@@ -241,7 +257,7 @@ main(int argc, char** argv)
 
 
 	HttpResponse hres;
-	hres.parseResponse(buf1, 20000);
+	hres.parseResponse(buf1, BUFSIZE);
 	char* body = strstr(buf1, "\r\n\r\n")+4;
 	std::string bodys = body;
 	std::istringstream iss(bodys);
@@ -488,7 +504,7 @@ main(int argc, char** argv)
 							socketStatus[fd] = 3; //sent them handshake back
 						}
 					}
-					else if (socketStatus[fd] )
+					else if (socketStatus[fd] >= 4)
 					{
 						if (sizeof(buf) >= 5) {
 							
@@ -606,3 +622,4 @@ main(int argc, char** argv)
 
 return 0;
 }
+
