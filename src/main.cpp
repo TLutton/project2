@@ -369,6 +369,7 @@ main(int argc, char** argv)
 					int clientSockfd = accept(fd, (struct sockaddr*)&clientAddr, &clientAddrSize);
 	
 					socketStatus[clientSockfd] = 0;
+					
 
 					if (clientSockfd == -1) 
 					{
@@ -436,6 +437,24 @@ main(int argc, char** argv)
 							return 8;
 						}
 						socketStatus[fd] = 1;
+					}
+					else if (socketStatus[fd] == 1)
+					{
+						// "hasHandshaked" but does not have bitfield
+						/*int bitfield_size = (n + 7)/8;
+						uint8_t* bitfield;
+						bitfield = new uint8_t[bifield_size];*/
+/*
+						Bitfield bitfield;
+						bitfield.decode(bufNew);
+
+						const int* theirBitfield= reinterpret_cast<const int*>(bfield->buf());
+*/
+						std::vector<uint8_t> pieces = mi.getPieces();
+						for(int i = 0; i < pieces.size(); i++)
+						{
+							std::cout << "getting piece length: " << pieces[i] << std::endl;	
+						}
 					}
 					/*else {
 						// message is not a handshake
