@@ -654,7 +654,7 @@ main(int argc, char** argv)
 					{
 						std::cout << "REJECTED " << std::endl;
 					}
-					struct sockaddr_in clientAddr;
+				/*	struct sockaddr_in clientAddr;
 					socklen_t clientAddrLen = sizeof(clientAddr);
 					if (getpeername(fd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) 
 					{
@@ -667,7 +667,7 @@ main(int argc, char** argv)
 					std::cout << "receive data connection from " << ipstr << ":" << ntohs(clientAddr.sin_port) << ": " << buf << std::endl;
 	
 
-
+*/
 					// remove the socket from the socket set
 					//FD_CLR(fd, &tmpFds);
 				
