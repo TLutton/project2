@@ -505,6 +505,7 @@ main(int argc, char** argv)
 						}
 						else if (socketStatus[fd] ==2)
 						{
+							std::cout << "sending handshake back, socket status is now 3" << std::endl;
 							//SEEND HANDSHAKE BACK
 							if (send(fd, hjc, HANDSHAKELEN, 0) == -1) 
 							{
@@ -514,8 +515,9 @@ main(int argc, char** argv)
 							socketStatus[fd] = 3; //sent them handshake back
 						}
 					}
-					else if (socketStatus[fd] >= 4)
+					else if (socketStatus[fd] >= 3)
 					{
+							std::cout << "socket status = " << socketStatus[fd] << std::endl;
 						if (sizeof(buf) >= 5) 
 						{
 							
