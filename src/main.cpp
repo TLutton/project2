@@ -466,7 +466,7 @@ main(int argc, char** argv)
 					FD_SET(clientSockfd, &tmpFds);
 				
 				} 
-				else 
+				else if(peerToFD.find(thePeerInfo) != peerToFD.end())
 				{ // this is the normal socket and normal requests
 
 					//FULLFILL WHATEVER REQUEST YOU RECEIVE
@@ -649,7 +649,10 @@ main(int argc, char** argv)
 						}
 						
 					}
-
+					else
+					{
+						std::cout << "REJECTED " << std::endl;
+					}
 					struct sockaddr_in clientAddr;
 					socklen_t clientAddrLen = sizeof(clientAddr);
 					if (getpeername(fd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) 
