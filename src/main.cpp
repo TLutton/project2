@@ -411,7 +411,7 @@ main(int argc, char** argv)
 			return 4;
 		}
 		
-		std::cout << "map size: " << socketStatus.size() << std::endl;
+		std::cout << " socket map size: " << socketStatus.size() << "peer info map: " << peerToFD.size() << std::endl;
 
 		for(int fd = 0; fd <= maxSockfd; fd++) 
 		{
@@ -459,7 +459,7 @@ main(int argc, char** argv)
 					{
 						//client already connected
 						close(clientSockfd);
-						std::cout << "already connected so not allowign a second connection" << std::endl;
+						std::cout << "already connected so not allowing a second connection" << std::endl;
 						continue;
 					}
 					// add the socket into the socket set
