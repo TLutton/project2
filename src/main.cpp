@@ -318,7 +318,7 @@ main(int argc, char** argv)
 		
 		peerToFD[i] = peerfd;
 		socketStatus[peerfd] = 0;
-
+		FD_SET(peerfd, &tmpFds);
 		
 	} 
 	//Eventually incorperate
@@ -460,6 +460,9 @@ main(int argc, char** argv)
 					}
 					// add the socket into the socket set
 					FD_SET(clientSockfd, &tmpFds);
+					std::cout << "map: " << std::endl;
+					for (std::map<char,int>::iterator it=peerToFD.begin(); it!=peerToFD.end(); ++it)
+						 std::cout << it->first << " => " << it->second << '\n';
 				} 
 				else 
 				{ // this is the normal socket and normal requests
@@ -479,7 +482,7 @@ main(int argc, char** argv)
 
 						if (recv(fd, buf, 68, 0) == -1) 
 						{
-							perror("recv");
+							perror("recv handshake");
 							return 6;
 						}
 					
