@@ -11,30 +11,25 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <stdio.h>
 #include <cstdlib>
 #include <cstring>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
 #include <climits>
-#include <map>
 #include <ctime>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <map>
 
 #include "client.hpp"
+#include "common.hpp"
 #include "meta-info.hpp"
+#include "tracker-response.hpp"
+#include "http/http-response.hpp"
 #include "http/http-request.hpp"
 #include "http/url-encoding.hpp"
 #include "util/bencoding.hpp"
 #include "util/buffer-stream.hpp"
 #include "msg/handshake.hpp"
 #include "msg/msg-base.hpp"
-#include "http/http-response.hpp"
-#include "tracker-response.hpp"
-#include "common.hpp"
 
 using namespace sbt;
 using namespace msg;
@@ -435,7 +430,7 @@ main(int argc, char** argv)
 					PeerInfo thePeerInfo;
 					thePeerInfo.ip = ipstr;
 					thePeerInfo.port = ntohs(clientAddr.sin_port);
-					if(peerToFD[thePeerInfo] != peerToFD.end())
+					if(peerToFD.find(thePeerInfo) != peerToFD.end())
 					{
 						//client already connected
 						close(clientSockfd);
@@ -536,6 +531,7 @@ main(int argc, char** argv)
 										socketStatus[fd] = 10;
 									break;
 								case MSG_ID_NOT_INTERESTED:	// 3
+									// do nothing
 									break;
 								case MSG_ID_HAVE:			// 4
 									break;
