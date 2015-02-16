@@ -43,6 +43,18 @@ using namespace msg;
 #define PEERLEN 20
 #define HANDSHAKELEN 68 
 
+
+// returns an int of next piece to grab
+int checkFilePieces(MetaInfo& metaInfo, int fd) 
+{
+	int fileSize = metaInfo.getLength();
+	int pieceLength = metaInfo.getPieceLength();
+	int roundUp = (fileSize % pieceLength); // decide if need division truncated piece
+	int numPieces = fileSize / pieceLength + roundUp ? 1 : 0;
+	
+	
+}
+
 int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr_in& serverAddr)
 {
 	std::size_t reqLen = seqReq.getTotalLength();
@@ -113,7 +125,7 @@ main(int argc, char** argv)
 	}	 
 
 	std::map<int, int> socketStatus;
-
+	std::map<PeerInfo, int> peerToFD;
 	//PART 1: TALKING TO THE TRACKER TO INITIALIZE
 
 	std::ifstream ifs (argv[2], std::ifstream::in);
@@ -239,13 +251,20 @@ main(int argc, char** argv)
 	tr.decode(theD);
 	std::vector<PeerInfo> pi = tr.getPeers();
 
+	PeerInfo myself; //add yourself to peertofd so you can't connect yourself
+	myself.ip = i.ip;
+	myself.port = atoi(argv[1]);
+	
+	peerToFD[myself] = -1; //don't check
+	
 	for (PeerInfo i : pi)
 	{
-		std::cout << "connect to peer"<< i.ip + ":" << i.port << std::endl;
-		if(i.ip.compare("127.0.0.1") ==0 && (i.port == atoi(argv[1])))
+	
+		if(peerToFD.find(i) != peerToFD.end()) //the peer (or yourself) is already in the list
 		{
 			continue;
 		}
+		
 		int peerfd = socket(AF_INET, SOCK_STREAM, 0);          
 		struct sockaddr_in peerAddr;
 		peerAddr.sin_family = AF_INET;
@@ -268,6 +287,9 @@ main(int argc, char** argv)
 			perror("send handshake");
 			return 8;
 		}
+		
+		peerToFD[i] = peerfd;
+		socketStatus[peerfd] = 0;
 
 		
 	} 
@@ -317,7 +339,14 @@ main(int argc, char** argv)
 		perror("listen");
 		return 3;
 	}
+	
 	//TODO: check the file we are downloading to see what pieces we have and need
+	// use map of <int: piece number, string piece NULL if no piece>
+
+	
+	
+	
+	
 	// initialize timer
 	struct timeval tv;
 	tv.tv_sec = 10;
@@ -368,7 +397,7 @@ main(int argc, char** argv)
 					socklen_t clientAddrSize;
 					int clientSockfd = accept(fd, (struct sockaddr*)&clientAddr, &clientAddrSize);
 	
-					socketStatus[clientSockfd] = 0;
+			
 					
 
 					if (clientSockfd == -1) 
@@ -380,11 +409,23 @@ main(int argc, char** argv)
 					char ipstr[INET_ADDRSTRLEN] = {'\0'};
 					inet_ntop(clientAddr.sin_family, &clientAddr.sin_addr, ipstr, sizeof(ipstr));
 					std::cout << "Accept a connection from: " << ipstr << ":" << ntohs(clientAddr.sin_port) << std::endl;
-
+					
 					// update maxSockfd
 					if (maxSockfd < clientSockfd)
 						maxSockfd = clientSockfd;
 
+
+					socketStatus[clientSockfd] = 2; //client has connected
+					PeerInfo thePeerInfo;
+					thePeerInfo.ip = ipstr;
+					thePeerInfo.port = ntohs(clientAddr.sin_port);
+					if(peerToFD[thePeerInfo] != peerToFD.end())
+					{
+						//client already connected
+						close(clientSockfd);
+						std::cout << "already connected so not allowign a second connection" << std::endl;
+						continue;
+					}
 					// add the socket into the socket set
 					FD_SET(clientSockfd, &tmpFds);
 				} 
@@ -416,76 +457,126 @@ main(int argc, char** argv)
 					std::cout << "bufnew: " << bufNew << std::endl;
 
 					// check to see if message is a handshake
-					if (socketStatus[fd] == 0) 
+					if (socketStatus[fd] == 0 || socketStatus[fd] == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
 						// message be a handshake
 						std::cout << "received handshake" << std::endl;
 						// create an empty Handshake object
 						HandShake handS;
-
 						// use handshake object's decode which takes a CBP
 						handS.decode(bufNew);
-
+					
 						HandShake handjob;
 						handjob.setInfoHash(mi.getHash());
 						handjob.setPeerId("SIMPLEBT.TEST.PEERID");
 						ConstBufferPtr hj = handjob.encode();
 						const char* hjc = reinterpret_cast<const char*>(hj->buf());
-						if (send(fd, hjc, HANDSHAKELEN, 0) == -1) 
+						
+						if(socketStatus[fd] == 0)
 						{
-							perror("send");
-							return 8;
+							socketStatus[fd] = 1; //sending bitfield
+							//TODO SEND BITFIELD
 						}
-						socketStatus[fd] = 1;
+						else if (socketStatus[fd] ==2)
+						{
+							//SEEND HANDSHAKE BACK
+							if (send(fd, hjc, HANDSHAKELEN, 0) == -1) 
+							{
+								perror("send");
+								return 8;
+							}
+							socketStatus[fd] = 3; //sent them handshake back
+						}
 					}
-					else if (socketStatus[fd] == 1)
+					else if (socketStatus[fd] )
 					{
-						// "hasHandshaked" but does not have bitfield
-						/*int bitfield_size = (n + 7)/8;
-						uint8_t* bitfield;
-						bitfield = new uint8_t[bifield_size];*/
-/*
-						Bitfield bitfield;
-						bitfield.decode(bufNew);
-
-						const int* theirBitfield= reinterpret_cast<const int*>(bfield->buf());
-*/
-						std::vector<uint8_t> pieces = mi.getPieces();
-						for(int i = 0; i < pieces.size(); i++)
-						{
-							std::cout << "getting piece length: " << pieces[i] << std::endl;	
+						if (sizeof(buf) >= 5) {
+							
+							char pleadTheFifth = *(buf+4);
+							uint8_t typeId = (uint8_t)pleadTheFifth;
+							
+							std::cout << "msg type: " << typeId << std::endl;
+							
+							switch (typeId)
+							{
+								case MSG_ID_CHOKE:			// 0
+									// do nothing
+									break;
+								case MSG_ID_UNCHOKE:		// 1
+									if(socketStatus[fd] == 8)
+										socketStatus[fd] = 9;
+										
+									if(socketStatus[fd] == 9)
+										socketStatus[fd] = 10;
+									break;
+								case MSG_ID_INTERESTED:		// 2
+									if(socketStatus[fd] == 5)
+										socketStatus[fd] = 8;
+										
+									if(socketStatus[fd] == 6)
+										socketStatus[fd] = 9;
+										
+									if(socketStatus[fd] == 7)
+										socketStatus[fd] = 10;
+									break;
+								case MSG_ID_NOT_INTERESTED:	// 3
+									break;
+								case MSG_ID_HAVE:			// 4
+									break;
+								case MSG_ID_BITFIELD:		// 5
+									Bitfield peerField;
+									peerField.decode(bufNew);
+									const int* theirBitfield = reinterpret_cast<const int*>(bfield->buf());
+									
+									// do stuff with their bitfield
+									
+									// create our own bitfield
+									int fileSize = mi.getLength();
+									int pieceLength = mi.getPieceLength();
+									int roundUp = (fileSize % pieceLength); // decide if need division truncated piece
+									int n = fileSize / pieceLength + roundUp ? 1 : 0;
+									int bitfieldSize = (n + 7)/8;
+									uint8_t* ourBitfield;
+									ourBitfield = new uint8_t[bitfieldSize];
+									
+									// we don't have any of the pieces yet
+									for (int b = 0; b < bitfieldSize; b++) {
+										ourBitfield[b] = 0;
+									}
+									
+									// send it back
+									
+									break;
+								case MSG_ID_REQUEST:		// 6
+									// one request for one piece
+									// on receiving a request, read data from file and generate the Piece msg
+									
+									// the "length" of request is set to "piecelength" in the torrent file
+									break;
+								case MSG_ID_PIECE:			// 7
+									// on receiving the corresponding piece, verify the piece against the corresponding
+									//		hash in "piece" in the torrent file
+									
+									// if verified
+									//		write to file
+									// else
+									//		drop the piece and request it again
+									
+									// if piece is accepted
+									//		send corresponding MSG_ID_HAVE msg  to all peers
+									// if more than one peer exists
+									//		requests should be balanced to each peers
+									break;
+								case MSG_ID_CANCEL:			// 8
+									break;
+								case MSG_ID_PORT:			// 9
+									break;
+								default:
+									// do nothing
+							}
 						}
+						
 					}
-					/*else {
-						// message is not a handshake
-
-						// what kind of message is it?
-						MsgBase mBase;
-						mBase.decode(bufNew);
-						switch (mBase.getId()) {
-							case MSG_ID_CHOKE:
-								break;
-							case MSG_UNCHOKE:
-								break;
-							case MSG_ID_INTERESTED:
-								break;
-							case MSG_ID_NOT_INTERESTED:
-								break;
-							case MSG_ID_HAVE:
-								break;
-							case MSG_ID_BITFIELD:
-								break;
-							case MSG_ID_REQUEST:
-								break;
-							case MSG_ID_PIECE:
-								break;
-							case MSG_ID_CANCEL:
-								break;
-							case MSG_ID_PORT:
-								break;
-							default:
-						}
-					}*/	
 
 					struct sockaddr_in clientAddr;
 					socklen_t clientAddrLen = sizeof(clientAddr);
@@ -515,5 +606,3 @@ main(int argc, char** argv)
 
 return 0;
 }
-
-

@@ -1,0 +1,27 @@
+//States
+//If we connect first 
+0: We sent a handshake, waiting for peer's handshake
+1: Got peers handshake, we sent bitfield
+//If they connect first
+2: They connected to us, waiting for handshake
+3: They sent us a handshake, we sent them one back
+
+//Bitfield
+4: they sent us a bitfield, we send them back a bitfield
+
+//Normal states if getting request
+5: peer needs to send interested, we need to send interested
+6: peer needs to send interested, we sent but still choked
+7: peer needs to send interested, we are unchoked
+8: peer is unchoked, we need to send interested
+9: peer is unchoked, we sent but still choked
+10: both are unchoked
+
+
+enum States {
+
+    HANDSHAKESENT = 0,
+    BITFIELDSENT,
+    ...
+
+};
