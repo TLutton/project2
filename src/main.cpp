@@ -38,8 +38,10 @@ using namespace msg;
 #define HANDSHAKELEN 68 
 #define BUFSIZE 20000
 
-struct cmpPeer {
-    bool operator()(const PeerInfo& a, const PeerInfo& b) const {
+struct cmpPeer 
+{
+    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
+    {
         int str = a.ip.compare(b.ip);
         if(str < 0)
         	return true;
@@ -92,7 +94,8 @@ int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr
 	}
 
 	// send request
-	if(send(secSockfd, buf, seqReq.getTotalLength(), 0) == -1) {
+	if(send(secSockfd, buf, seqReq.getTotalLength(), 0) == -1) 
+	{
 		perror("send");
 		return 4;
 	} 
@@ -100,7 +103,8 @@ int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr
 	// receive response
 	char secReqRecBuf[BUFSIZE];
 	memset(secReqRecBuf, '\0', sizeof(secReqRecBuf));
-	if(recv(secSockfd, secReqRecBuf, BUFSIZE, 0) == -1) {
+	if(recv(secSockfd, secReqRecBuf, BUFSIZE, 0) == -1) 
+	{
 		perror("receive");
 		return 5;
 	}
@@ -149,7 +153,8 @@ main(int argc, char** argv)
 
 	std::vector<uint8_t> vp;
 	uint8_t it = 0;
-	while (it < PEERLEN) {
+	while (it < PEERLEN) 
+	{
 		vp.push_back(it++);
 	}
 
@@ -193,7 +198,8 @@ main(int argc, char** argv)
 
 	// get address
 	int status = 0;
-	if ((status = getaddrinfo(host.c_str(), port.c_str(), &hints, &res)) != 0) {
+	if ((status = getaddrinfo(host.c_str(), port.c_str(), &hints, &res)) != 0) 
+	{
 		std::cerr << "getaddrinfo: " << gai_strerror(status) << std::endl;
 		return 2;
 	}
@@ -224,7 +230,8 @@ main(int argc, char** argv)
 	struct sockaddr_in clientAddr;
 
 	socklen_t clientAddrLen = sizeof(clientAddr);
-	if (getsockname(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) {
+	if (getsockname(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) 
+	{
 		perror("getsockname");
 		return 3;
 	}
@@ -238,12 +245,14 @@ main(int argc, char** argv)
 
 	memset(buf1, '\0', sizeof(buf1));
 
-	if (send(sockfd, buf, req.getTotalLength(), 0) == -1) {
+	if (send(sockfd, buf, req.getTotalLength(), 0) == -1) 
+	{
 		perror("send");
 		return 4;
 	}
 
-	if (recv(sockfd, buf1, BUFSIZE, 0) == -1) {
+	if (recv(sockfd, buf1, BUFSIZE, 0) == -1) 
+	{
 		perror("recv");
 		return 5;
 	}
@@ -283,7 +292,8 @@ main(int argc, char** argv)
 		peerAddr.sin_port = htons(i.port);     // short, network byte order
 		peerAddr.sin_addr.s_addr = inet_addr(i.ip.c_str());
 		// connect to the server
-		if (connect(peerfd, (struct sockaddr *)&peerAddr, sizeof(peerAddr)) == -1) {
+		if (connect(peerfd, (struct sockaddr *)&peerAddr, sizeof(peerAddr)) == -1) 
+		{
 			perror("connect");
 			return 2;
 		}
@@ -329,7 +339,8 @@ main(int argc, char** argv)
 
 	// allow others to reuse the address
 	int yes = 1;
-	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) 
+	{
 		perror("setsockopt");
 		return 1;
 	}	
@@ -341,13 +352,15 @@ main(int argc, char** argv)
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 
-	if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+	if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) == -1) 
+	{
 		perror("bind");
 		return 2;
 	}
 
 	// set the socket in listen status
-	if (listen(sockfd, 10) == -1) {
+	if (listen(sockfd, 10) == -1) 
+	{
 		perror("listen");
 		return 3;
 	}
@@ -384,7 +397,8 @@ main(int argc, char** argv)
 		}
 
 		// set up watcher
-		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) {
+		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
+		{
 			perror("select");
 			return 4;
 		}
@@ -502,7 +516,8 @@ main(int argc, char** argv)
 					}
 					else if (socketStatus[fd] >= 4)
 					{
-						if (sizeof(buf) >= 5) {
+						if (sizeof(buf) >= 5) 
+						{
 							
 							char pleadTheFifth = *(buf+4);
 							uint8_t typeId = (uint8_t)pleadTheFifth;
@@ -511,17 +526,17 @@ main(int argc, char** argv)
 							
 							switch (typeId)
 							{
-								case MSG_ID_CHOKE: {			// 0
-									// do nothing
-									break;
-								} case MSG_ID_UNCHOKE: {		// 1
+								case MSG_ID_UNCHOKE: 
+								{		// 1
 									if(socketStatus[fd] == 8)
 										socketStatus[fd] = 9;
 										
 									if(socketStatus[fd] == 9)
 										socketStatus[fd] = 10;
 									break;
-								} case MSG_ID_INTERESTED:	{	// 2
+								} 
+								case MSG_ID_INTERESTED:	
+								{	// 2
 									if(socketStatus[fd] == 5)
 										socketStatus[fd] = 8;
 										
@@ -531,12 +546,13 @@ main(int argc, char** argv)
 									if(socketStatus[fd] == 7)
 										socketStatus[fd] = 10;
 									break;
-								} case MSG_ID_NOT_INTERESTED:	 {// 3
-									// do nothing
+								}
+								case MSG_ID_HAVE: 
+								{			// 4
 									break;
-								} case MSG_ID_HAVE: {			// 4
-									break;
-								} case MSG_ID_BITFIELD: {		// 5
+								} 
+								case MSG_ID_BITFIELD: 
+								{		// 5
 									Bitfield peerField;
 									peerField.decode(bufNew);
 									
@@ -561,13 +577,17 @@ main(int argc, char** argv)
 									// send it back
 									
 									break;
-								} case MSG_ID_REQUEST:	{	// 6
+								} 
+								case MSG_ID_REQUEST:	
+								{	// 6
 									// one request for one piece
 									// on receiving a request, read data from file and generate the Piece msg
 									
 									// the "length" of request is set to "piecelength" in the torrent file
 									break;
-								} case MSG_ID_PIECE: {			// 7
+								} 
+								case MSG_ID_PIECE: 
+								{			// 7
 									// on receiving the corresponding piece, verify the piece against the corresponding
 									//		hash in "piece" in the torrent file
 									
@@ -581,11 +601,15 @@ main(int argc, char** argv)
 									// if more than one peer exists
 									//		requests should be balanced to each peers
 									break;
-								} case MSG_ID_CANCEL: {			// 8
+								} 
+								case MSG_ID_CANCEL: 
+								{			// 8
 									break;
-								} case MSG_ID_PORT:			// 9
+								} 
+								case MSG_ID_PORT:			// 9
 									break;
 								default:
+									break;
 									// do nothing
 							}
 						}
