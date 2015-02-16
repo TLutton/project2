@@ -462,7 +462,7 @@ main(int argc, char** argv)
 					//IF we have their bitfield, see if they have a file we want and keep track of that
 					//-----If file is done, send completed event to tracker
 
-					char buf[BUFSIZE] = {0};
+					char buf[68] = {0};
 
 					if (recv(fd, buf, BUFSIZE, 0) == -1) 
 					{
@@ -471,7 +471,7 @@ main(int argc, char** argv)
 					}
 					//ss << buf << std::endl;
 
-					std::cout << "WHAT UP MY FRIENDS " << buf[4] << std::endl;
+					std::cout << "WHAT UP MY FRIENDS " << buf[68] << std::endl;
 					// check to see if message is a handshake
 					if (socketStatus[fd] == 0 || socketStatus[fd] == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
