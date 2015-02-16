@@ -450,11 +450,10 @@ main(int argc, char** argv)
 					if (maxSockfd < clientSockfd)
 						maxSockfd = clientSockfd;
 
-
-					socketStatus[clientSockfd] = 2; //client has connected
 					PeerInfo thePeerInfo;
 					thePeerInfo.ip = ipstr;
 					thePeerInfo.port = ntohs(clientAddr.sin_port);
+				
 					if(peerToFD.find(thePeerInfo) != peerToFD.end())
 					{
 						//client already connected
@@ -462,6 +461,8 @@ main(int argc, char** argv)
 						std::cout << "already connected so not allowing a second connection" << std::endl;
 						continue;
 					}
+					socketStatus[clientSockfd] = 2; //client has connected
+					
 					// add the socket into the socket set
 					FD_SET(clientSockfd, &tmpFds);
 				
