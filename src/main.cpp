@@ -177,7 +177,7 @@ main(int argc, char** argv)
 	req.setHost(host);
 	req.setPort(std::stoi(port));
 	req.setMethod(HttpRequest::GET);
-	req.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+argv[1]+"&uploaded=0&downloaded=0&left=300&event=started"); //this needs to be the query
+	req.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+argv[1]+"&uploaded=0&downloaded=0&left=46822&event=started"); //this needs to be the query
 	req.setVersion("1.0");
 	req.addHeader("Accept-Language", "en-US");
 
