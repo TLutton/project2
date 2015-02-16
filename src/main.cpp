@@ -518,7 +518,7 @@ main(int argc, char** argv)
 					else if (socketStatus[fd] >= 3)
 					{
 							std::cout << "socket status = " << socketStatus[fd] << std::endl;
-						if (sizeof(buf) >= 5) 
+						if (strlen(buf) >= 5) 
 						{
 							
 							char pleadTheFifth = *(buf+4);
