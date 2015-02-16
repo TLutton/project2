@@ -284,6 +284,13 @@ main(int argc, char** argv)
 	
 	peerToFD[myself] = -1; //don't check
 	
+	int maxSockfd = 0;
+
+	fd_set readFds;
+	fd_set tmpFds;
+	FD_ZERO(&readFds);
+	FD_ZERO(&tmpFds);
+	
 	for (PeerInfo i : pi)
 	{
 	
@@ -329,12 +336,7 @@ main(int argc, char** argv)
 
 
 
-	int maxSockfd = 0;
 
-	fd_set readFds;
-	fd_set tmpFds;
-	FD_ZERO(&readFds);
-	FD_ZERO(&tmpFds);
 	
 	// create a socket using TCP IP
 	sockfd = socket(AF_INET, SOCK_STREAM, 0); // allowed because we close old sockets
