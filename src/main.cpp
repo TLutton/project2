@@ -63,6 +63,7 @@ int checkFilePieces(MetaInfo& metaInfo, int fd)
 	int roundUp = (fileSize % pieceLength); // decide if need division truncated piece
 	int numPieces = fileSize / pieceLength + roundUp ? 1 : 0;
 	
+	return -1;  // no
 	
 }
 
@@ -263,7 +264,7 @@ main(int argc, char** argv)
 	std::vector<PeerInfo> pi = tr.getPeers();
 
 	PeerInfo myself; //add yourself to peertofd so you can't connect yourself
-	myself.ip = i.ip;
+	myself.ip = "127.0.0.1";
 	myself.port = atoi(argv[1]);
 	
 	peerToFD[myself] = -1; //don't check
@@ -510,17 +511,17 @@ main(int argc, char** argv)
 							
 							switch (typeId)
 							{
-								case MSG_ID_CHOKE:			// 0
+								case MSG_ID_CHOKE: {			// 0
 									// do nothing
 									break;
-								case MSG_ID_UNCHOKE:		// 1
+								} case MSG_ID_UNCHOKE: {		// 1
 									if(socketStatus[fd] == 8)
 										socketStatus[fd] = 9;
 										
 									if(socketStatus[fd] == 9)
 										socketStatus[fd] = 10;
 									break;
-								case MSG_ID_INTERESTED:		// 2
+								} case MSG_ID_INTERESTED:	{	// 2
 									if(socketStatus[fd] == 5)
 										socketStatus[fd] = 8;
 										
@@ -530,15 +531,16 @@ main(int argc, char** argv)
 									if(socketStatus[fd] == 7)
 										socketStatus[fd] = 10;
 									break;
-								case MSG_ID_NOT_INTERESTED:	// 3
+								} case MSG_ID_NOT_INTERESTED:	 {// 3
 									// do nothing
 									break;
-								case MSG_ID_HAVE:			// 4
+								} case MSG_ID_HAVE: {			// 4
 									break;
-								case MSG_ID_BITFIELD:		// 5
+								} case MSG_ID_BITFIELD: {		// 5
 									Bitfield peerField;
 									peerField.decode(bufNew);
-									const int* theirBitfield = reinterpret_cast<const int*>(bfield->buf());
+									
+									const int* theirBitfield = reinterpret_cast<const int*>(peerField.getBitfield()->buf());
 									
 									// do stuff with their bitfield
 									
@@ -559,13 +561,13 @@ main(int argc, char** argv)
 									// send it back
 									
 									break;
-								case MSG_ID_REQUEST:		// 6
+								} case MSG_ID_REQUEST:	{	// 6
 									// one request for one piece
 									// on receiving a request, read data from file and generate the Piece msg
 									
 									// the "length" of request is set to "piecelength" in the torrent file
 									break;
-								case MSG_ID_PIECE:			// 7
+								} case MSG_ID_PIECE: {			// 7
 									// on receiving the corresponding piece, verify the piece against the corresponding
 									//		hash in "piece" in the torrent file
 									
@@ -579,9 +581,9 @@ main(int argc, char** argv)
 									// if more than one peer exists
 									//		requests should be balanced to each peers
 									break;
-								case MSG_ID_CANCEL:			// 8
+								} case MSG_ID_CANCEL: {			// 8
 									break;
-								case MSG_ID_PORT:			// 9
+								} case MSG_ID_PORT:			// 9
 									break;
 								default:
 									// do nothing
