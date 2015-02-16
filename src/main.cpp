@@ -533,13 +533,13 @@ main(int argc, char** argv)
 							return 6;
 						}
 						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
-						OBufferStream obuf;
+					/*	OBufferStream obuf;
 						obuf.put(0);
 						obuf.write(buf, 5);
 						shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
-	
+	*/
 						std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
-						std::cout << "bufnew: " << bufNew << std::endl;
+						
 						
 						std::cout << "socket status = " << socketStatus[fd] << std::endl;
 						std::cout << "STRLEN " << strlen(buf) << std::endl;
@@ -580,7 +580,7 @@ main(int argc, char** argv)
 								} 
 								case MSG_ID_BITFIELD: 
 								{		// 5
-									Bitfield peerField;
+								/*	Bitfield peerField;
 									peerField.decode(bufNew);
 									
 									const int* theirBitfield = reinterpret_cast<const int*>(peerField.getBitfield()->buf());
@@ -602,7 +602,7 @@ main(int argc, char** argv)
 									}
 									
 									// send it back
-									
+									*/
 									break;
 								} 
 								case MSG_ID_REQUEST:	
