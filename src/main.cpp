@@ -41,6 +41,7 @@
 using namespace sbt;
 using namespace msg;
 #define PEERLEN 20
+#define HANDSHAKELEN 68 
 
 int checkTracker(TrackerResponse& trackRes, HttpRequest& seqReq, struct sockaddr_in& serverAddr)
 {
@@ -147,7 +148,7 @@ main(int argc, char** argv)
 	req.setHost(host);
 	req.setPort(std::stoi(port));
 	req.setMethod(HttpRequest::GET);
-	req.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+argv[1]+"&uploaded=111&downloaded=1112&left=300&event=started"); //this needs to be the query
+	req.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+argv[1]+"&uploaded=0&downloaded=0&left=300&event=started"); //this needs to be the query
 	req.setVersion("1.0");
 	req.addHeader("Accept-Language", "en-US");
 
@@ -237,10 +238,14 @@ main(int argc, char** argv)
 	TrackerResponse tr;
 	tr.decode(theD);
 	std::vector<PeerInfo> pi = tr.getPeers();
-/*
+
 	for (PeerInfo i : pi)
 	{
-		std::cout << i.ip + ":" << i.port << std::endl;
+		std::cout << "connect to peer"<< i.ip + ":" << i.port << std::endl;
+		if(i.ip.compare("127.0.0.1") ==0 && (i.port == atoi(argv[1])))
+		{
+			continue;
+		}
 		int peerfd = socket(AF_INET, SOCK_STREAM, 0);          
 		struct sockaddr_in peerAddr;
 		peerAddr.sin_family = AF_INET;
@@ -266,7 +271,6 @@ main(int argc, char** argv)
 
 		
 	} 
-*/
 	//Eventually incorperate
 	
 
@@ -296,7 +300,7 @@ main(int argc, char** argv)
 		return 1;
 	}	
 
-	// bind address to socket
+	// bind to socket
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(atoi(argv[1]));     //TODO set this to argv
@@ -331,6 +335,12 @@ main(int argc, char** argv)
 	while (true) 
 	{
 		readFds = tmpFds;
+		if(((int)time(0) - (int)t ) > trInterval) 
+		{
+			checkTracker(tr, req, serverAddr);
+			trInterval = tr.getInterval();
+			t = time(0);
+		}
 
 		// set up watcher
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) {
@@ -384,42 +394,43 @@ main(int argc, char** argv)
 					//IF we have their bitfield, see if they have a file we want and keep track of that
 					//-----If file is done, send completed event to tracker
 
-					char buf[20] = {0};
+					char buf[68];
 					std::stringstream ss;
 
 					memset(buf, '\0', sizeof(buf));
-					if (recv(fd, buf, 20, 0) == -1) 
+					if (recv(fd, buf, 68, 0) == -1) 
 					{
 						perror("recv");
 						return 6;
 					}
-					ss << buf << std::endl;
+					//ss << buf << std::endl;
 
 					// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
 					OBufferStream obuf;
 					obuf.put(0);
-					obuf.write(buf, 20);
+					obuf.write(buf, 67);
 					shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
+
+					std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
+					std::cout << "bufnew: " << bufNew << std::endl;
 
 					// check to see if message is a handshake
 					if (socketStatus[fd] == 0) 
 					{
 						// message be a handshake
-
+						std::cout << "received handshake" << std::endl;
 						// create an empty Handshake object
 						HandShake handS;
 
 						// use handshake object's decode which takes a CBP
 						handS.decode(bufNew);
 
-						OBufferStream infobuf;
-						infobuf.put(0);
-						infobuf.write(encodedHash.c_str(), encodedHash.length()+1);
-						shared_ptr<Buffer> infohash = infobuf.buf();
-						HandShake handjob(infohash, "SIMPLEBT.TEST.PEERID");
+						HandShake handjob;
+						handjob.setInfoHash(mi.getHash());
+						handjob.setPeerId("SIMPLEBT.TEST.PEERID");
 						ConstBufferPtr hj = handjob.encode();
 						const char* hjc = reinterpret_cast<const char*>(hj->buf());
-						if (send(fd, hjc, 68, 0) == -1) 
+						if (send(fd, hjc, HANDSHAKELEN, 0) == -1) 
 						{
 							perror("send");
 							return 8;
@@ -472,7 +483,7 @@ main(int argc, char** argv)
 
 
 					// remove the socket from the socket set
-					FD_CLR(fd, &tmpFds);
+					//FD_CLR(fd, &tmpFds);
 				
 				}
 			}
@@ -480,50 +491,10 @@ main(int argc, char** argv)
 		//IF < some number of connections ADD MORE PEER CONNECTIONS FROM TRACKER LIST
 		}
 
-	std::cout << "keep going" << std::endl;
+	//std::cout << "keep going" << std::endl;
 	}
 
 return 0;
 }
 
 
-/*
-void
-Client::sendHandshake(int fd, std::string encodedHash) 
-{
-	// make a handshake to send
-	msg::HandShake handjob(encodedHash, "SIMPLEBT.TEST.PEERID"); // m_encodedHash corresponds to encodedHash in main.cpp
-	ConstBufferPtr hjBufPtr = handjob.encode();
-	
-	if(send(fd, handjob, (*hjBufPtr).size(), 0) < 0)
-	{
-		perror("send handshake");
-		return; //8;
-	}
-}
-
-msg::HandShake
-Client::catchHandshake()
-{
-	int hsSize = 68; // size of handshake
-
-	char hs[hsSize] = {0};
-
-	OBufferStream obuf;
-
-	for(int i = 0; i < hsSize; ++i)
-	{
-		if(recv(m_listenerfd, hs+i, hsSize - i, 0) < 0)
-			perror("recv");
-	}
-
-	obuf.write(hs, hsSize);
-	ConstBufferPtr obufPtr = obuf.buf();
-
-	msg::HandShake handshake;
-	handshake.decode(obufPtr);
-
-	return handshake;
-
-}
-*/
