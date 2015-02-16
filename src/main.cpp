@@ -462,19 +462,22 @@ main(int argc, char** argv)
 					//IF we have their bitfield, see if they have a file we want and keep track of that
 					//-----If file is done, send completed event to tracker
 
-					char buf[BUFSIZE] = {0};
-
-					if (recv(fd, buf, BUFSIZE, 0) == -1) 
-					{
-						perror("recv");
-						return 6;
-					}
+				
 					//ss << buf << std::endl;
 
 					std::cout << "WHAT UP MY FRIENDS " << buf << std::endl;
 					// check to see if message is a handshake
 					if (socketStatus[fd] == 0 || socketStatus[fd] == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
+						char buf[68] = {0};
+
+						if (recv(fd, buf, 68, 0) == -1) 
+						{
+							perror("recv");
+							return 6;
+						}
+					
+					
 						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
 						OBufferStream obuf;
 						obuf.put(0);
@@ -516,11 +519,17 @@ main(int argc, char** argv)
 					}
 					else if (socketStatus[fd] >= 3)
 					{
-						
+						char buf[5] = {0};
+
+						if (recv(fd, buf, 5, 0) == -1) 
+						{
+							perror("recv");
+							return 6;
+						}
 						// cast char* buffer to ConstBuffPtr using make_share or OBufferStream
 						OBufferStream obuf;
 						obuf.put(0);
-						obuf.write(buf, BUFSIZE);
+						obuf.write(buf, 5);
 						shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
 	
 						std::cout << "buf: " << buf << " buf size :" << bufNew->size() << std::endl;
