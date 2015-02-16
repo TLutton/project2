@@ -411,7 +411,7 @@ main(int argc, char** argv)
 			return 4;
 		}
 		
-		std::cout << " socket map size: " << socketStatus.size() << "peer info map: " << peerToFD.size() << std::endl;
+	//	std::cout << " socket map size: " << socketStatus.size() << "peer info map: " << peerToFD.size() << std::endl;
 
 		for(int fd = 0; fd <= maxSockfd; fd++) 
 		{
