@@ -9,15 +9,18 @@
 #include <sys/select.h>
 
 #include "client.hpp"
+#include "tracker-response.hpp"
+#include "meta-info.hpp"
+#include "common.hpp"
 #include "msg/handshake.hpp"
 #include "msg/msg-base.hpp"
 #include "util/buffer-stream.hpp"
 #include "util/bencoding.hpp"
+#include "util/hash.hpp"
+#include "util/buffer.hpp"
 #include "http/url-encoding.hpp"
 #include "http/http-request.hpp"
 #include "http/http-response.hpp"
-#include "tracker-response.hpp"
-#include "meta-info.hpp"
 
 #include <iostream>
 #include <string>
