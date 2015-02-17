@@ -23,7 +23,14 @@
 #define SBT_CLIENT_HPP
 
 #include "common.hpp"
+#include "meta-info.hpp"
+#include "tracker-response.hpp"
 #include "msg/handshake.hpp"
+#include "http/http-request.hpp"
+
+#include <string>
+#include <ctime>
+
 
 namespace sbt {
 struct cmpPeer  //comparator for peer info

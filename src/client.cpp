@@ -1,4 +1,22 @@
 #include "client.hpp"
+#include "msg/handshake.hpp"
+#include "msg/msg-base.hpp"
+#include "util/buffer-stream.hpp"
+#include "util/bencoding.hpp"
+#include "http/url-encoding.hpp"
+#include "http/http-request.hpp"
+#include "http/http-response.hpp"
+#include "tracker-response.hpp"
+#include "meta-info.hpp"
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <map>
 
 
 Client::Client(const std::string& port, const std::string& torrent)
