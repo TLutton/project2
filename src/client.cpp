@@ -442,6 +442,7 @@ int Client::addPeer()
 {
     struct sockaddr_in clientAddr;
 	socklen_t clientAddrSize;
+	std::cout << "Trying to accept a connection" << std::endl;
 	int clientSockfd = accept(listenerFD, (struct sockaddr*)&clientAddr, &clientAddrSize);
 	if (clientSockfd == -1) 
 	{
