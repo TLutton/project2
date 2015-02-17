@@ -113,7 +113,6 @@ Client::Client(const std::string& port1, const std::string& torrent)
 	while(true)
 	{
 		
-	    readFds = tmpFds;
 		// set up watcher
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
 		{
