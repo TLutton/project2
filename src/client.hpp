@@ -88,7 +88,7 @@ public:
   
   void sendHandShake(int fd);
   
-  void receiveMessage(int fd);
+  MsgBase* receiveMessage(int fd);
   
   void setupTrackerRequest();
   

@@ -108,8 +108,9 @@ Client::Client(const std::string& port, const std::string& torrent)
 					}
 					else if(getFDStatus(fd) >= 3) //expecting a message
 					{
-					    MsgBase mb = receiveMessage(fd);
-					    switch (mb.getId())
+					    //MsgBase mb = receiveMessage(fd);
+					    MsgBase* mb	= receiveMessage(fd);
+					    switch (mb->getId())
 						{
 							case MSG_ID_UNCHOKE: 
 							{		// 1
@@ -190,14 +191,15 @@ void Client::sendHandShake(int fd)
 	}
 }
 
-void Client::receiveMessage(int fd)
+// void Client::receiveMessage(int fd)
+MsgBase* Client::receiveMessage(int fd)
 {
     	char buf[5] = {0};
 		int status = 0;
 		if ((status =recv(fd, buf, 5, 0)) == -1) 
 		{
 			perror("recv");
-			return;
+			return NULL;
 		}
 		
 		std::cout << "recv size = " << status << std::endl;
@@ -209,6 +211,34 @@ void Client::receiveMessage(int fd)
 		uint8_t typeId = (uint8_t)pleadTheFifth;
 		
 		std::cout << "msg type: " << typeId << std::endl;
+		
+		// ??????
+		// are we receiving messages correctly? 
+		// based on call to receiveMessage(fd) in line 111, 
+		// this function needs to return a MsgBase
+		// MsgBase is abstract, so the best that can be returned
+		// is a generic pointer.
+		
+		MsgBase* mb;
+		if(typeId == MSG_ID_UNCHOKE)
+			mb = new Unchoke;
+		else if(typeId == MSG_ID_INTERESTED)
+			mb = new Interested;
+		else if(typeId == MSG_ID_HAVE)
+			mb = new Have;
+		else if(typeId == MSG_ID_BITFIELD)
+			mb = new Bitfield;
+		else if(typeId == MSG_ID_REQUEST)
+			mb = new Request;
+		else if(typeID == MSG_ID_PIECE)
+			mb = new Piece;
+		else
+			mb = NULL;
+			
+		mb->decode(buf); 
+		return mb;
+		
+		}
 }
 void Client::setupTrackerRequest()
 {
