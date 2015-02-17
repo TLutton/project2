@@ -310,7 +310,7 @@ MsgBase* Client::receiveMessage(int fd)
 	std::cout << "socket status = " << socketStatus[fd] << std::endl;
 	std::cout << "STRLEN " << strlen(buf) << std::endl;
 	int typeId = buf[4];
-	uint32_t msgLength = ntohl(*(reinterpret_cast<uint32_t*>(buf)));
+	uint32_t msgLength = ntohl((reinterpret_cast<uint32_t*>(buf))[0]);
 	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
 	// ??????
@@ -329,7 +329,6 @@ MsgBase* Client::receiveMessage(int fd)
 		mb = new Have;
 	else if(typeId == MSG_ID_BITFIELD)
 		mb = new Bitfield;
-		mb->decode()
 	else if(typeId == MSG_ID_REQUEST)
 		mb = new Request;
 	else if(typeId == MSG_ID_PIECE)
