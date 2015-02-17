@@ -60,6 +60,7 @@
 #define BUFSIZE 20000
 
 namespace sbt {
+namespace msg {
 struct cmpPeer  //comparator for peer info
 {
     bool operator()(const PeerInfo& a, const PeerInfo& b) const 
@@ -144,5 +145,6 @@ private:
 };
 
 } // namespace sbt
+} // namespace msg
 
 #endif // SBT_CLIENT_HPP
