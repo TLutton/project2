@@ -156,8 +156,8 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					//TODO Prevent duplicates
 				
 					setFDStatus(clientSockfd, 2); //client has connected
-		            FD_SET(childFD, &readFds);
-		            std::cout << "added fd captured by listener: " << childFD << std::endl;
+		            FD_SET(childSockfd, &readFds);
+		            std::cout << "added fd captured by listener: " << childSockfd << std::endl;
 		        	
 		        	
 		        	
