@@ -158,12 +158,6 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					setFDStatus(clientSockfd, 2); //client has connected
 		            FD_SET(clientSockfd, &readFds);
 		            std::cout << "added fd captured by listener: " << clientSockfd << std::endl;
-		        	
-		        	
-		        	
-		        	
-		        	
-		        	
 		        }
 		        else if(isFDPeer(fd))
 		        {
@@ -285,9 +279,9 @@ void Client::sendHandShake(int fd)
 // void Client::receiveMessage(int fd)
 MsgBase* Client::receiveMessage(int fd)
 {
-	char buf[5] = {0};
+	char buf[100] = {0};
 	int status = 0;
-	if ((status =recv(fd, buf, 5, 0)) == -1) 
+	if ((status =recv(fd, buf, sizeof(buf), 0)) == -1) 
 	{
 		perror("recv");
 		return NULL;
@@ -295,7 +289,8 @@ MsgBase* Client::receiveMessage(int fd)
 	
 	std::cout << "recv size = " << status << std::endl;
 	std::cout << "buf: " << buf;
-	
+	for(int i = 0; i < 5; i++)
+		printf("%x", buf[i]);
 	std::cout << "socket status = " << socketStatus[fd] << std::endl;
 	std::cout << "STRLEN " << strlen(buf) << std::endl;
 	char pleadTheFifth = buf[4];
