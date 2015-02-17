@@ -124,6 +124,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 		
 		for(int fd = 0; fd <= maxSockfd; fd++)
 		{
+			std::cout << " fd: " << fd << " maxSockfd: " << maxSockfd << std::endl;
 			if(shouldUpdateTracker())
 				sendTrackerRequest();
 		    if(FD_ISSET(fd, &readFds))
