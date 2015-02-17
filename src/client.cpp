@@ -476,6 +476,7 @@ void Client::setFDStatus(int fd, int status)
 		socketStatus[fd] = status;
 }
 
+/*
 int Client::getFDofPeer(PeerID pi, std::vector<PeerFD>& pfd)
 {
 	for(int i=0; i < pfd.size(); i++)
@@ -485,3 +486,4 @@ int Client::getFDofPeer(PeerID pi, std::vector<PeerFD>& pfd)
 	}
 	return -1; //if not found, return -1
 }
+*/
