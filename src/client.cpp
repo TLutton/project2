@@ -290,7 +290,7 @@ MsgBase* Client::receiveMessage(int fd)
 	std::cout << "recv size = " << status << std::endl;
 	std::cout << "buf: " << buf;
 	for(int i = 0; i < 5; i++)
-		printf("%x", buf[i]);
+		printf("%d", buf[i]);
 	std::cout << "socket status = " << socketStatus[fd] << std::endl;
 	std::cout << "STRLEN " << strlen(buf) << std::endl;
 	char pleadTheFifth = buf[4];
