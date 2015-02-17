@@ -1,6 +1,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
@@ -341,7 +343,7 @@ int Client::setupPeerListener()
 	// bind to socket
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(atoi(port));     //TODO set this to argv
+	addr.sin_port = htons(atoi(port.c_str()));     //TODO set this to argv
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 
