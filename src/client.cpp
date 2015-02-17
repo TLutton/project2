@@ -148,11 +148,13 @@ Client::Client(const std::string& port, const std::string& torrent)
 HandShake Client::receiveHandShake(int fd)
 {
     	char buf[68] = {0};
+    	HandShake handS;
 
 		if (recv(fd, buf, 68, 0) == -1) 
 		{
 			perror("recv handshake");
-			return 6;
+			//return 6;
+			return handS; // uninitialized
 		}
 	
 	
@@ -168,7 +170,7 @@ HandShake Client::receiveHandShake(int fd)
 		// message be a handshake
 		std::cout << "received handshake" << std::endl;
 		// create an empty Handshake object
-    	HandShake handS;
+
     	// use handshake object's decode which takes a CBP
     	handS.decode(bufNew);
     	return handS;
