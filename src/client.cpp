@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
 #include <netdb.h>  // for addrinfo stuff
