@@ -317,17 +317,17 @@ void Client::setupTrackerRequest()
 
 	std::size_t pos = torrentInfo.getAnnounce().find("//");
 	std::string host = torrentInfo.getAnnounce().substr(pos+2);
-	std::string port = host.substr(host.find(":")+1);
-	std::string location = port;
-	location = location.substr(port.find("/"));
-	port = port.substr(0, port.find("/"));
+	std::string trport = host.substr(host.find(":")+1);
+	std::string location = trport;
+	location = location.substr(trport.find("/"));
+	trport = trport.substr(0, trport.find("/"));
 	pos = host.find(":");
 	host = host.substr(0, pos);
 
 	trRequest.setHost(host);
-	trRequest.setPort(std::stoi(port));
+	trRequest.setPort(std::stoi(trport));
 	trRequest.setMethod(HttpRequest::GET);
-	trRequest.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+port+"&uploaded=0&downloaded=0&left=46822&event=started"); //this needs to be the query
+	trRequest.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+trport+"&uploaded=0&downloaded=0&left=46822&event=started"); //this needs to be the query
 	trRequest.setVersion("1.0");
 	trRequest.addHeader("Accept-Language", "en-US");
 }
