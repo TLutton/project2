@@ -304,6 +304,9 @@ void Client::sendTrackerRequest()
 		Can't convert to c string with this function.
 		This argument will be left as NULL to aid compilation and shall be addressed later
 	*/
+	int thePort = 0;
+	thePort += trRequest.getPort();
+	std::cout << "unsigned short: " <<  trRequest.getPort() << " int: " << thePort << std::endl;
 	if ((status = getaddrinfo(trRequest.getHost().c_str(), NULL , &hints, &res)) != 0) 
 	{
 		std::cerr << "getaddrinfo: " << gai_strerror(status) << std::endl;
