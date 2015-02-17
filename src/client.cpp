@@ -38,9 +38,9 @@ using namespace sbt;
 using namespace msg;
 
 
-Client::Client(const std::string& port, const std::string& torrent)
+Client::Client(const std::string& port1, const std::string& torrent)
 {
-    this->port = port;
+    this->port = port1;
     this->torrent = torrent; 
     //std::ifstream ifs (argv[2], std::ifstream::in);
 	std::ifstream ifs(torrent, std::ifstream::in);
@@ -53,6 +53,9 @@ Client::Client(const std::string& port, const std::string& torrent)
     
 	fd_set tmpFds;
 	FD_ZERO(&tmpFds);
+	fd_set readFds;
+//	fd_set tmpFds; //moved up to pass as parameter to setupPeerListener
+	FD_ZERO(&readFds);
 	
 	maxSockfd = 0;
 	
@@ -102,9 +105,7 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
 	
 	
-	fd_set readFds;
-//	fd_set tmpFds; //moved up to pass as parameter to setupPeerListener
-	FD_ZERO(&readFds);
+	
 //	FD_ZERO(&tmpFds);
 	//int maxSockfd = 0;
 //	maxSockfd = 0;
