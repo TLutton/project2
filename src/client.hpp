@@ -62,6 +62,7 @@
 
 namespace sbt {
 namespace msg {
+
 struct cmpPeer  //comparator for peer info
 {
     bool operator()(const PeerInfo& a, const PeerInfo& b) const 
@@ -80,19 +81,12 @@ struct cmpPeer  //comparator for peer info
     }
 };
 
+
 class Client
 {
 public:
   Client(const std::string& port, const std::string& torrent);
-/*  
-  HandShake receiveHandShake(int fd);
-  void sendHandShake(int fd);
-  MsgBase* receiveMessage(int fd);
-  void setupTrackerRequest();
-  void sendTrackerRequest();
-  bool shouldUpdateTracker();
-  int setupPeerListener(fd_set& tmpFds); 
-*/
+
   int addPeer(fd_set& tmpFds);
 
 private:
