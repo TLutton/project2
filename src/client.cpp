@@ -56,7 +56,41 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
 	maxSockfd = 0;
 	
-    listenerFD = setupPeerListener(tmpFds);
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0); // allowed because we close old sockets
+	maxSockfd = sockfd;
+
+	// put the socket in the socket set
+	FD_SET(sockfd, &tmpFds);
+
+	// allow others to reuse the address
+	int yes = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) 
+	{
+		perror("setsockopt");
+		//return 1;
+	}	
+
+	// bind to socket
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(atoi(port.c_str()));     //TODO set this to argv
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
+
+	if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) == -1) 
+	{
+		perror("bind");
+		// 2;
+	}
+
+	// set the socket in listen status
+	if (listen(sockfd, 10) == -1) 
+	{
+		perror("listen");
+		//return 3;
+	}
+	
+	listenerFD = sockfd;
     
 	//clientHandShake.setInfoHash(mi.getHash());
 	clientHandShake.setInfoHash(torrentInfo.getHash()); // tommy
@@ -82,7 +116,7 @@ Client::Client(const std::string& port, const std::string& torrent)
 		// set up watcher
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
 		{
-			perror("select");
+			perror("select"); std::cout << "select" << std::endl;
 			// return 4;
 			exit(4); // no return from constructor?
 		}
