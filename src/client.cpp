@@ -383,7 +383,7 @@ int Client::addPeer(fd_set& tmpFds)
 	PeerInfo thePeerInfo;
 	thePeerInfo.ip = ipstr;
 	thePeerInfo.port = ntohs(clientAddr.sin_port);
-
+	/*
 	if(peerToFD.find(thePeerInfo) != peerToFD.end())
 	{
 		//client already connected
@@ -393,6 +393,7 @@ int Client::addPeer(fd_set& tmpFds)
 	}
 	socketStatus[clientSockfd] = 2; //client has connected
 	peerToFD[thePeerInfo] = clientSockfd;
+	*/
 	// add the socket into the socket set
 	FD_SET(clientSockfd, &tmpFds);
 	return clientSockfd;

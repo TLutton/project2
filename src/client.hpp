@@ -90,6 +90,8 @@ private:
   void removePeer();
   int listenerFD;
   
+  int maxSockfd; //tommy
+  
   //Tracker
   HttpRequest trRequest;
   void setupTrackerRequest();
