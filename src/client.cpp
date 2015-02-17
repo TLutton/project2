@@ -461,4 +461,14 @@ int Client::addPeer(fd_set& tmpFds)
 	return clientSockfd;
 }
 
+bool Client::isFDPeer(int fd)
+{
+	// this needs to be implemented
+	return false;
+}
 
+int Client::getFDStatus(int fd)
+{
+	// this needs to be implemented
+	return -1;
+}
