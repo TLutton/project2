@@ -63,7 +63,7 @@
 namespace sbt {
 namespace msg {
 
-struct eerFD {
+struct PeerFD {
   PeerInfo pi;
   int fd;
 };
@@ -82,7 +82,7 @@ private:
   
   //Peer Data
   std::map<int, int> socketStatus;
-  int getFDofPeer(std::vector<PeerFD>& pfd);
+  //int getFDofPeer(std::vector<PeerFD>& pfd); //dele
   
   //int setupPeerListener();
   int setupPeerListener(fd_set& tmpFds);
