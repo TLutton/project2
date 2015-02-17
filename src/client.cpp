@@ -435,6 +435,7 @@ int Client::setupPeerListener(fd_set& tmpFds)
 		return 3;
 	}
 	
+	listenerFD = sockfd;
 	return sockfd;
 }
 
