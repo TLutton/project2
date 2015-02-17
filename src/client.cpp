@@ -332,14 +332,12 @@ void Client::sendTrackerRequest()
 	// convert the IP to a string and print it:
 	char ipstr[INET_ADDRSTRLEN] = {'\0'};
 	inet_ntop(p->ai_family, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
-	std::cout << "ip address: " << ipstr << std::endl;
 	freeaddrinfo(res); // free the linked list
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);          
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(thePort);     // short, network byte order
 	serverAddr.sin_addr.s_addr = inet_addr(ipstr);
-	std::cout << "about to connect" << std::endl;
 	// connect to the server
 	if (connect(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
 		perror("connect");
