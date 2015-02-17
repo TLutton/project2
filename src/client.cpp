@@ -78,6 +78,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
 	while(true)
 	{
+		if(shouldUpdateTracker())
+			sendTrackerRequest();
 	    readFds = tmpFds;
 		// set up watcher
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
@@ -339,7 +341,7 @@ void Client::sendTrackerRequest()
 		perror("connect");
 		return;// 2;
 	}
-	std::cout << "connected" << std::endl;
+	std::cout << "connected -<3 Yingdi" << std::endl;
 	struct sockaddr_in clientAddr;
 
 	socklen_t clientAddrLen = sizeof(clientAddr);
