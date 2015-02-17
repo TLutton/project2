@@ -85,7 +85,7 @@ class Client
 public:
   Client(const std::string& port, const std::string& torrent);
   
-  Handshake receiveHandShake(int fd);
+  HandShake receiveHandShake(int fd);
   
   void sendHandShake(int fd);
   
