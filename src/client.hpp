@@ -63,7 +63,7 @@
 namespace sbt {
 namespace msg {
 
-struct peerFD {
+struct eerFD {
   PeerInfo pi;
   int fd;
 };
