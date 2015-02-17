@@ -89,7 +89,7 @@ Client::Client(const std::string& port, const std::string& torrent)
 		            if(childFD > maxSockfd)
 		                maxSockfd = childFD;
 		        }
-		        else if(isFDPeer())
+		        else if(isFDPeer(fd))
 		        {
 		            if (getFDStatus(fd) == 0 || getFDStatus(fd) == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
@@ -230,7 +230,7 @@ MsgBase* Client::receiveMessage(int fd)
 			mb = new Bitfield;
 		else if(typeId == MSG_ID_REQUEST)
 			mb = new Request;
-		else if(typeID == MSG_ID_PIECE)
+		else if(typeId == MSG_ID_PIECE)
 			mb = new Piece;
 		else
 			mb = NULL;
@@ -238,7 +238,7 @@ MsgBase* Client::receiveMessage(int fd)
 		OBufferStream obuf;
 		obuf.write(buf, 5);
 		
-		constBufferPtr cnstBufPtr = obuf.buf();
+		ConstBufferPtr cnstBufPtr = obuf.buf();
 		mb->decode(msgBuf); 
 		
 		return mb;
