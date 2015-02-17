@@ -42,7 +42,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 {
     this->port = port1;
     this->torrent = torrent; 
-    //std::ifstream ifs (argv[2], std::ifstream::in);
+    //std::ifstreams (argv[2], std::ifstream::in);
 	std::ifstream ifs(torrent, std::ifstream::in);
 	torrentInfo.wireDecode(ifs);
 	encodedPeer = "SIMPLEBT.TEST.PEERID";
@@ -198,6 +198,10 @@ Client::Client(const std::string& port1, const std::string& torrent)
 		        {
 		        	std::cout<<"Why did i get here?" << std::endl;
 		        }
+		    }
+		    else
+		    {
+		    	std::cout<<"Why did i get here? #2" << std::endl;
 		    }
 			
 		} //end of fd loop
