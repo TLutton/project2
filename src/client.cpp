@@ -78,8 +78,7 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
 	while(true)
 	{
-		if(shouldUpdateTracker())
-			sendTrackerRequest();
+		
 	    readFds = tmpFds;
 		// set up watcher
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
@@ -91,6 +90,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 		
 		for(int fd = 0; fd <= maxSockfd; fd++)
 		{
+			if(shouldUpdateTracker())
+				sendTrackerRequest();
 		    if(FD_ISSET(fd, &readFds))
 		    {
 		        if(fd == listenerFD)
