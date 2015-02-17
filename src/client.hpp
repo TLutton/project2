@@ -92,8 +92,9 @@ public:
   void sendTrackerRequest();
   bool shouldUpdateTracker();
   int setupPeerListener(fd_set& tmpFds); 
-  int addPeer(fd_set& tmpFds);
 */
+  int addPeer(fd_set& tmpFds);
+
 private:
   
   std::string port;
@@ -102,7 +103,8 @@ private:
   //Peer Data
   std::map<int, int> socketStatus;
   std::map<PeerInfo, int> peerToFD;
-  int setupPeerListener();
+  //int setupPeerListener();
+  int setupPeerListener(fd_set& tmpFds);
   bool isPeerConnected(PeerInfo pi); //won't add peer if not connected
   int getPeerStatus(PeerInfo pi);
   bool isFDPeer(int fd);
