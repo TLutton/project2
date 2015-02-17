@@ -56,8 +56,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 	fd_set tmpFds;
 	FD_ZERO(&readFds);
 	FD_ZERO(&tmpFds);
-	int maxSockfd = 0;
-	
+	//int maxSockfd = 0;
+	maxSockfd = 0;
 	
 	while(true)
 	{
