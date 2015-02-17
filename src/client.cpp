@@ -306,8 +306,9 @@ void Client::sendTrackerRequest()
 	*/
 	int thePort = 0;
 	thePort += trRequest.getPort();
-	std::cout << "unsigned short: " <<  trRequest.getPort() << " int: " << thePort << std::endl;
-	if ((status = getaddrinfo(trRequest.getHost().c_str(), NULL , &hints, &res)) != 0) 
+	char strPort[6];
+	itoa(thePort, strPort);
+	if ((status = getaddrinfo(trRequest.getHost().c_str(), &strPort , &hints, &res)) != 0) 
 	{
 		std::cerr << "getaddrinfo: " << gai_strerror(status) << std::endl;
 		return;
@@ -328,7 +329,7 @@ void Client::sendTrackerRequest()
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);          
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(std::stoi(port));     // short, network byte order
+	serverAddr.sin_port = htons(thePort);     // short, network byte order
 	serverAddr.sin_addr.s_addr = inet_addr(ipstr);
 	std::cout << "about to connect" << std::endl;
 	// connect to the server
