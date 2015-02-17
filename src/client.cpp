@@ -36,6 +36,25 @@
 using namespace sbt;
 using namespace msg;
 
+struct cmpPeer  //comparator for peer info
+{
+    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
+    {
+        int str = a.ip.compare(b.ip);
+        if(str < 0)
+        	return true;
+        else if (str > 0)
+        	return false;
+        else if(a.port < b.port)
+        {
+        	return true;
+        }
+        else
+        	return false;
+    }
+};
+
+
 Client::Client(const std::string& port, const std::string& torrent)
 {
     this->port = port;
@@ -445,7 +464,7 @@ int Client::addPeer(fd_set& tmpFds)
 	PeerInfo thePeerInfo;
 	thePeerInfo.ip = ipstr;
 	thePeerInfo.port = ntohs(clientAddr.sin_port);
-	/*
+	
 	if(peerToFD.find(thePeerInfo) != peerToFD.end())
 	{
 		//client already connected
@@ -455,7 +474,7 @@ int Client::addPeer(fd_set& tmpFds)
 	}
 	socketStatus[clientSockfd] = 2; //client has connected
 	peerToFD[thePeerInfo] = clientSockfd;
-	*/
+	
 	// add the socket into the socket set
 	FD_SET(clientSockfd, &tmpFds);
 	return clientSockfd;
