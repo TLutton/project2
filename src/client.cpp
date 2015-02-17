@@ -63,7 +63,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 	maxSockfd = sockfd;
 
 	// put the socket in the socket set
-	FD_SET(sockfd, &tmpFds);
+	FD_SET(sockfd, readFds);
 
 	// allow others to reuse the address
 	int yes = 1;
