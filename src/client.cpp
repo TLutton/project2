@@ -38,9 +38,10 @@ using namespace msg;
 
 Client::Client(const std::string& port, const std::string& torrent)
 {
-    this.port = port;
-    this.torrent = torrent; 
-    std::ifstream ifs (argv[2], std::ifstream::in);
+    this->port = port;
+    this->torrent = torrent; 
+    //std::ifstream ifs (argv[2], std::ifstream::in);
+	std::ifstream ifs(torrent, std::ifstream::in);
 	torrentInfo.wireDecode(ifs);
 	encodedPeer = "SIMPLEBT.TEST.PEERID";
 	
@@ -53,7 +54,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
     listenerFD = setupPeerListener(tmpFds);
     
-	clientHandShake.setInfoHash(mi.getHash());
+	//clientHandShake.setInfoHash(mi.getHash());
+	clientHandShake.setInfoHash(torrentInfo.getHash()); // tommy
 	clientHandShake.setPeerId("SIMPLEBT.TEST.PEERID");
 	// initialize timer
 	struct timeval tv;
@@ -76,7 +78,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 		if (select(maxSockfd + 1, &readFds, NULL, NULL, &tv) == -1) 
 		{
 			perror("select");
-			return 4;
+			// return 4;
+			exit(4); // no return from constructor?
 		}
 		
 		for(int fd = 0; fd <= maxSockfd; fd++)
@@ -239,7 +242,7 @@ MsgBase* Client::receiveMessage(int fd)
 		obuf.write(buf, 5);
 		
 		ConstBufferPtr cnstBufPtr = obuf.buf();
-		mb->decode(msgBuf); 
+		mb->decode(cnstBufPtr); 
 		
 		return mb;
 		
