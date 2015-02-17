@@ -327,7 +327,7 @@ void Client::setupTrackerRequest()
 	trRequest.setHost(host);
 	trRequest.setPort(std::stoi(trport));
 	trRequest.setMethod(HttpRequest::GET);
-	trRequest.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+trport+"&uploaded=0&downloaded=0&left=46822&event=started"); //this needs to be the query
+	trRequest.setPath(location+"?info_hash=" + encodedHash+"&peer_id="+encodedPeer+"&port="+port+"&uploaded=0&downloaded=0&left=46822&event=started"); //this needs to be the query
 	trRequest.setVersion("1.0");
 	trRequest.addHeader("Accept-Language", "en-US");
 }
