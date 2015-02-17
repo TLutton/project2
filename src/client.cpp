@@ -57,6 +57,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 	fd_set tmpFds;
 	FD_ZERO(&tmpFds);
 	
+	maxSockfd = 0;
+	
     listenerFD = setupPeerListener(tmpFds);
     
 	//clientHandShake.setInfoHash(mi.getHash());
@@ -74,7 +76,7 @@ Client::Client(const std::string& port, const std::string& torrent)
 	FD_ZERO(&readFds);
 //	FD_ZERO(&tmpFds);
 	//int maxSockfd = 0;
-	maxSockfd = 0;
+//	maxSockfd = 0;
 	
 	while(true)
 	{
@@ -107,7 +109,9 @@ Client::Client(const std::string& port, const std::string& torrent)
 		        	std::cout << "looping through fd: " << fd << std::endl;
 		            if (getFDStatus(fd) == 0 || getFDStatus(fd) == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
+						std::cout << "About to recieve handshake" << std::endl;
 					    HandShake hs = receiveHandShake(fd);
+					    std::cout << "just received handshake" << std::endl;
 					    //TODO VERIFY THIS
 					    if(getFDStatus(fd) == 0)
 					    {
