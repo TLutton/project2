@@ -271,7 +271,7 @@ void Client::sendTrackerRequest()
 	// connect to the server
 	if (connect(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
 		perror("connect");
-		return 2;
+		return;// 2;
 	}
 
 	struct sockaddr_in clientAddr;
@@ -280,7 +280,7 @@ void Client::sendTrackerRequest()
 	if (getsockname(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) 
 	{
 		perror("getsockname");
-		return 3;
+		return;// 3;
 	}
 
 	char ipstr1[INET_ADDRSTRLEN] = {'\0'};
@@ -290,18 +290,19 @@ void Client::sendTrackerRequest()
 	char buf1[BUFSIZE] = {0};
 	std::stringstream ss;
 
-	memset(buf1, '\0', sizeof(buf1));
+	//memset(buf1, '\0', sizeof(buf1)); // tommy
 
-	if (send(sockfd, buf, req.getTotalLength(), 0) == -1) 
+	//if (send(sockfd, buf, req.getTotalLength(), 0) == -1)
+	if(send(sockfd, buf, reqLen, 0) == -1)
 	{
 		perror("send");
-		return 4;
+		return;// 4;
 	}
 
 	if (recv(sockfd, buf1, BUFSIZE, 0) == -1) 
 	{
 		perror("recv");
-		return 5;
+		return;// 5;
 	}
 	close(sockfd);
 
@@ -318,6 +319,7 @@ void Client::sendTrackerRequest()
 	trInterval = tr.getInterval();
 	
 	lastCheck = time(0);
+	//free [] buf; // ???? Tommy
 }
 
 bool Client::shouldUpdateTracker()

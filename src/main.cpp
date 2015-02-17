@@ -34,9 +34,7 @@
 using namespace sbt;
 using namespace msg;
 
-#define PEERLEN 20
-#define HANDSHAKELEN 68 
-#define BUFSIZE 20000
+
 
 
 int

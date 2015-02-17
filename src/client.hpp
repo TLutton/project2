@@ -31,6 +31,9 @@
 #include <string>
 #include <ctime>
 
+#define PEERLEN 20
+#define HANDSHAKELEN 68 
+#define BUFSIZE 20000
 
 namespace sbt {
 struct cmpPeer  //comparator for peer info
