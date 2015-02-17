@@ -84,23 +84,16 @@ class Client
 {
 public:
   Client(const std::string& port, const std::string& torrent);
-  
+/*  
   HandShake receiveHandShake(int fd);
-  
   void sendHandShake(int fd);
-  
   MsgBase* receiveMessage(int fd);
-  
   void setupTrackerRequest();
-  
   void sendTrackerRequest();
-  
   bool shouldUpdateTracker();
-  
-  int setupPeerListener(fd_set& tmpFds);
-  
+  int setupPeerListener(fd_set& tmpFds); 
   int addPeer(fd_set& tmpFds);
-  
+*/
 private:
   
   std::string port;
@@ -136,7 +129,7 @@ private:
   //receiving data
   HandShake receiveHandShake(int fd);
   void sendHandShake(int fd);
-  MsgBase receiveMessage(int fd);
+  MsgBase* receiveMessage(int fd);
   HandShake clientHandShake;
   
   //file data

@@ -199,55 +199,55 @@ void Client::sendHandShake(int fd)
 // void Client::receiveMessage(int fd)
 MsgBase* Client::receiveMessage(int fd)
 {
-    	char buf[5] = {0};
-		int status = 0;
-		if ((status =recv(fd, buf, 5, 0)) == -1) 
-		{
-			perror("recv");
-			return NULL;
-		}
+	char buf[5] = {0};
+	int status = 0;
+	if ((status =recv(fd, buf, 5, 0)) == -1) 
+	{
+		perror("recv");
+		return NULL;
+	}
+	
+	std::cout << "recv size = " << status << std::endl;
+	std::cout << "buf: " << buf;
+	
+	std::cout << "socket status = " << socketStatus[fd] << std::endl;
+	std::cout << "STRLEN " << strlen(buf) << std::endl;
+	char pleadTheFifth = buf[4];
+	uint8_t typeId = (uint8_t)pleadTheFifth;
+	
+	std::cout << "msg type: " << typeId << std::endl;
+	
+	// ??????
+	// are we receiving messages correctly? 
+	// based on call to receiveMessage(fd) in line 111, 
+	// this function needs to return a MsgBase
+	// MsgBase is abstract, so the best that can be returned
+	// is a generic pointer.
+	
+	MsgBase* mb;
+	if(typeId == MSG_ID_UNCHOKE)
+		mb = new Unchoke;
+	else if(typeId == MSG_ID_INTERESTED)
+		mb = new Interested;
+	else if(typeId == MSG_ID_HAVE)
+		mb = new Have;
+	else if(typeId == MSG_ID_BITFIELD)
+		mb = new Bitfield;
+	else if(typeId == MSG_ID_REQUEST)
+		mb = new Request;
+	else if(typeId == MSG_ID_PIECE)
+		mb = new Piece;
+	else
+		return NULL;
 		
-		std::cout << "recv size = " << status << std::endl;
-		std::cout << "buf: " << buf;
-		
-		std::cout << "socket status = " << socketStatus[fd] << std::endl;
-		std::cout << "STRLEN " << strlen(buf) << std::endl;
-		char pleadTheFifth = buf[4];
-		uint8_t typeId = (uint8_t)pleadTheFifth;
-		
-		std::cout << "msg type: " << typeId << std::endl;
-		
-		// ??????
-		// are we receiving messages correctly? 
-		// based on call to receiveMessage(fd) in line 111, 
-		// this function needs to return a MsgBase
-		// MsgBase is abstract, so the best that can be returned
-		// is a generic pointer.
-		
-		MsgBase* mb;
-		if(typeId == MSG_ID_UNCHOKE)
-			mb = new Unchoke;
-		else if(typeId == MSG_ID_INTERESTED)
-			mb = new Interested;
-		else if(typeId == MSG_ID_HAVE)
-			mb = new Have;
-		else if(typeId == MSG_ID_BITFIELD)
-			mb = new Bitfield;
-		else if(typeId == MSG_ID_REQUEST)
-			mb = new Request;
-		else if(typeId == MSG_ID_PIECE)
-			mb = new Piece;
-		else
-			return NULL;
-			
-		OBufferStream obuf;
-		obuf.write(buf, 5);
-		
-		ConstBufferPtr cnstBufPtr = obuf.buf();
-		if(mb != NULL)
-			mb->decode(cnstBufPtr); 
-		
-		return mb;
+	OBufferStream obuf;
+	obuf.write(buf, 5);
+	
+	ConstBufferPtr cnstBufPtr = obuf.buf();
+	if(mb != NULL)
+		mb->decode(cnstBufPtr); 
+	
+	return mb;
 		
 }
 void Client::setupTrackerRequest()
