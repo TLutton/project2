@@ -308,7 +308,8 @@ void Client::sendTrackerRequest()
 	int thePort = 0;
 	thePort += trRequest.getPort();
 	char strPort[6];
-	itoa(thePort, strPort, 10);
+	
+	snprintf(strPort, sizeof(strPort), "%d", thePort);
 	if ((status = getaddrinfo(trRequest.getHost().c_str(), (const char*)&strPort , &hints, &res)) != 0) 
 	{
 		std::cerr << "getaddrinfo: " << gai_strerror(status) << std::endl;
