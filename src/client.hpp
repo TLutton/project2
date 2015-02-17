@@ -82,7 +82,7 @@ private:
   
   //Peer Data
   std::map<int, int> socketStatus;
-  //int getFDofPeer(std::vector<PeerFD>& pfd); //dele
+  //int getFDofPeer(std::vector<PeerFD>& pfd); //deleted
   
   //int setupPeerListener();
   int setupPeerListener(fd_set& tmpFds);

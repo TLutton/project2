@@ -47,11 +47,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 	torrentInfo.wireDecode(ifs);
 	encodedPeer = "SIMPLEBT.TEST.PEERID";
 	
-	//std::cout << "going to setup tracker request" << std::endl;
 	setupTrackerRequest();
-	//std::cout << "setup tracker request, sending it" << std::endl;
     sendTrackerRequest();
-    //std::cout << "sent tracker request" << std::endl;
     lastCheck = time(0);
     
 	fd_set tmpFds;
@@ -98,11 +95,12 @@ Client::Client(const std::string& port, const std::string& torrent)
 		    {
 		        if(fd == listenerFD)
 		        {
+		        	std::cout << "adding fd captured by listener: " << std::endl;
 		            int childFD = addPeer();
 		            FD_SET(childFD, &tmpFds);
 		            if(childFD > maxSockfd)
 		                maxSockfd = childFD;
-		            std::cout << "adding fd captured by listener: " << childFD << std::endl;
+		            std::cout << "added fd captured by listener: " << childFD << std::endl;
 		        }
 		        else if(isFDPeer(fd))
 		        {
@@ -159,6 +157,10 @@ Client::Client(const std::string& port, const std::string& torrent)
 						}
 					}
 					
+		        }
+		        else
+		        {
+		        	std::cout<<"Why did i get here?" << std::endl;
 		        }
 		    }
 			
