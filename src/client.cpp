@@ -235,10 +235,14 @@ MsgBase* Client::receiveMessage(int fd)
 		else
 			mb = NULL;
 			
-		mb->decode(buf); 
+		OBufferStream obuf;
+		obuf.write(buf, 5);
+		
+		constBufferPtr cnstBufPtr = obuf.buf();
+		mb->decode(msgBuf); 
+		
 		return mb;
 		
-		}
 }
 void Client::setupTrackerRequest()
 {
