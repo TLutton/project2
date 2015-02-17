@@ -130,11 +130,40 @@ Client::Client(const std::string& port1, const std::string& torrent)
 		        if(fd == listenerFD)
 		        {
 		        	std::cout << "adding fd captured by listener: " << std::endl;
-		            int childFD = addPeer();
+		            
+		            //ADD PEER
+		            struct sockaddr_in clientAddr;
+					socklen_t clientAddrSize;
+					std::cout << "Trying to accept a connection on listenerfd: " << listenerFD << std::endl;
+					int clientSockfd = accept(listenerFD, (struct sockaddr*)&clientAddr, &clientAddrSize);
+					if (clientSockfd == -1) 
+					{
+						perror("accept");
+						return -1;
+					}
+				
+					char ipstr[INET_ADDRSTRLEN] = {'\0'};
+					inet_ntop(clientAddr.sin_family, &clientAddr.sin_addr, ipstr, sizeof(ipstr));
+					std::cout << "Accept a connection from: " << ipstr << ":" << ntohs(clientAddr.sin_port) << std::endl;
+					
+					// update maxSockfd
+					if (maxSockfd < clientSockfd)
+						maxSockfd = clientSockfd;
+				
+					PeerInfo thePeerInfo;
+					thePeerInfo.ip = ipstr;
+					thePeerInfo.port = ntohs(clientAddr.sin_port);
+					//TODO Prevent duplicates
+				
+					setFDStatus(clientSockfd, 2); //client has connected
 		            FD_SET(childFD, &readFds);
-		            if(childFD > maxSockfd)
-		                maxSockfd = childFD;
 		            std::cout << "added fd captured by listener: " << childFD << std::endl;
+		        	
+		        	
+		        	
+		        	
+		        	
+		        	
 		        }
 		        else if(isFDPeer(fd))
 		        {
