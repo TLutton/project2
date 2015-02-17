@@ -139,7 +139,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					if (clientSockfd == -1) 
 					{
 						perror("accept");
-						return -1;
+					//	return -1;
 					}
 				
 					char ipstr[INET_ADDRSTRLEN] = {'\0'};
