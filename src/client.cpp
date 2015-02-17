@@ -67,7 +67,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 
 	// allow others to reuse the address
 	int yes = 1;
-	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) 
+	if (setsockopt(listenerFD, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) 
 	{
 		perror("setsockopt");
 		//return 1;
