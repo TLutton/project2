@@ -1,3 +1,11 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/select.h>
+
 #include "client.hpp"
 #include "msg/handshake.hpp"
 #include "msg/msg-base.hpp"
@@ -18,6 +26,8 @@
 #include <ctime>
 #include <map>
 
+using namespace sbt;
+using namespace msg;
 
 Client::Client(const std::string& port, const std::string& torrent)
 {
@@ -118,13 +128,11 @@ Client::Client(const std::string& port, const std::string& torrent)
 					
 		        }
 		    }
-		    //end of fd loop
-		}
+			
+		} //end of fd loop
 		
-		//end of while true loop
-	}
-
-    
+	} //end of while true loop
+	
 }
 
 HandShake Client::receiveHandShake(int fd)
