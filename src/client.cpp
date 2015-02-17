@@ -310,8 +310,8 @@ MsgBase* Client::receiveMessage(int fd)
 	std::cout << "socket status = " << socketStatus[fd] << std::endl;
 	std::cout << "STRLEN " << strlen(buf) << std::endl;
 	int typeId = buf[4];
-	
-	std::cout << "msg type: " << typeId << std::endl;
+	uint32_t msgLength = ntohl(*(reinterpret_cast<uint32_t*>(buf)));
+	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
 	// ??????
 	// are we receiving messages correctly? 
@@ -329,6 +329,7 @@ MsgBase* Client::receiveMessage(int fd)
 		mb = new Have;
 	else if(typeId == MSG_ID_BITFIELD)
 		mb = new Bitfield;
+		mb->decode()
 	else if(typeId == MSG_ID_REQUEST)
 		mb = new Request;
 	else if(typeId == MSG_ID_PIECE)
@@ -337,7 +338,7 @@ MsgBase* Client::receiveMessage(int fd)
 		return NULL;
 		
 	OBufferStream obuf;
-	obuf.write(buf, 5);
+	obuf.write(buf, status);
 	
 	ConstBufferPtr cnstBufPtr = obuf.buf();
 	if(mb != NULL)
@@ -427,7 +428,7 @@ void Client::sendTrackerRequest()
 		perror("connect");
 		return;// 2;
 	}
-	//std::cout << "connected -<3 Yingdi" << std::endl;
+	//std::cout << "connected" << std::endl;
 	struct sockaddr_in clientAddr;
 
 	socklen_t clientAddrLen = sizeof(clientAddr);
