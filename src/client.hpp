@@ -68,7 +68,7 @@ public:
   
   bool shouldUpdateTracker();
   
-  int setupPeerListener();
+  int setupPeerListener(fd_set& tmpFds);
   
   int addPeer(fd_set& tmpFds);
   

@@ -43,7 +43,10 @@ Client::Client(const std::string& port, const std::string& torrent)
     sendTrackerRequest();
     lastCheck = time(0);
     
-    listenerFD = setupPeerListener();
+	fd_set tmpFds;
+	FD_ZERO(&tmpFds);
+	
+    listenerFD = setupPeerListener(tmpFds);
     
 	clientHandShake.setInfoHash(mi.getHash());
 	clientHandShake.setPeerId("SIMPLEBT.TEST.PEERID");
@@ -55,9 +58,9 @@ Client::Client(const std::string& port, const std::string& torrent)
 	
 	
 	fd_set readFds;
-	fd_set tmpFds;
+//	fd_set tmpFds; //moved up to pass as parameter to setupPeerListener
 	FD_ZERO(&readFds);
-	FD_ZERO(&tmpFds);
+//	FD_ZERO(&tmpFds);
 	//int maxSockfd = 0;
 	maxSockfd = 0;
 	
@@ -324,9 +327,9 @@ bool Client::shouldUpdateTracker()
     return false;
 }
 
-int Client::setupPeerListener()
+int Client::setupPeerListener(fd_set& tmpFds)
 {
-    sockfd = socket(AF_INET, SOCK_STREAM, 0); // allowed because we close old sockets
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0); // allowed because we close old sockets
 	maxSockfd = sockfd;
 
 	// put the socket in the socket set
