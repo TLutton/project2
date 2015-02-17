@@ -46,8 +46,11 @@ Client::Client(const std::string& port, const std::string& torrent)
 	torrentInfo.wireDecode(ifs);
 	encodedPeer = "SIMPLEBT.TEST.PEERID";
 	
+	std::cout << "going to setup tracker request" << std::endl;
 	setupTrackerRequest();
+	std::cout << "setup tracker request, sending it" << std::endl;
     sendTrackerRequest();
+    std::cout << "sent tracker request" << std::endl;
     lastCheck = time(0);
     
 	fd_set tmpFds;
