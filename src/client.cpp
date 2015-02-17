@@ -236,13 +236,14 @@ MsgBase* Client::receiveMessage(int fd)
 		else if(typeId == MSG_ID_PIECE)
 			mb = new Piece;
 		else
-			mb = NULL;
+			return NULL;
 			
 		OBufferStream obuf;
 		obuf.write(buf, 5);
 		
 		ConstBufferPtr cnstBufPtr = obuf.buf();
-		mb->decode(cnstBufPtr); 
+		if(mb != NULL)
+			mb->decode(cnstBufPtr); 
 		
 		return mb;
 		

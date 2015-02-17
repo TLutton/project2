@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <netdb.h>
 
 #include "client.hpp"
 #include "tracker-response.hpp"
