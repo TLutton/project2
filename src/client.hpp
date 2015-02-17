@@ -63,7 +63,10 @@
 namespace sbt {
 namespace msg {
 
-
+struct peerFD {
+  PeerInfo pi;
+  int fd;
+};
 
 class Client
 {
@@ -79,16 +82,14 @@ private:
   
   //Peer Data
   std::map<int, int> socketStatus;
-  std::map<PeerInfo, int> peerToFD;
+  int getFDofPeer(std::vector<PeerFD>& pfd);
+  
   //int setupPeerListener();
   int setupPeerListener(fd_set& tmpFds);
-  bool isPeerConnected(PeerInfo pi); //won't add peer if not connected
-  int getPeerStatus(PeerInfo pi);
   bool isFDPeer(int fd);
   int getFDStatus(int fd);
   void setFDStatus(int fd, int status);
-  void addPeer(PeerInfo pi, int fd);
-  void removePeer();
+  int addPeer();
   int listenerFD;
   
   int maxSockfd; //tommy
@@ -115,23 +116,6 @@ private:
   int uploaded, downloaded;
   std::string event;
   
-struct cmpPeer  //comparator for peer info
-{
-    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
-    {
-        int str = a.ip.compare(b.ip);
-        if(str < 0)
-        	return true;
-        else if (str > 0)
-        	return false;
-        else if(a.port < b.port)
-        {
-        	return true;
-        }
-        else
-        	return false;
-    }
-};
 };
 
 } // namespace sbt

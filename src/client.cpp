@@ -89,7 +89,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 		    {
 		        if(fd == listenerFD)
 		        {
-		            int childFD = addPeer(tmpFds);
+		            int childFD = addPeer();
+		            FD_SET(childFD, &tmpFds);
 		            if(childFD > maxSockfd)
 		                maxSockfd = childFD;
 		        }
@@ -424,7 +425,7 @@ int Client::setupPeerListener(fd_set& tmpFds)
 	return sockfd;
 }
 
-int Client::addPeer(fd_set& tmpFds)
+int Client::addPeer()
 {
     struct sockaddr_in clientAddr;
 	socklen_t clientAddrSize;
@@ -446,30 +447,41 @@ int Client::addPeer(fd_set& tmpFds)
 	PeerInfo thePeerInfo;
 	thePeerInfo.ip = ipstr;
 	thePeerInfo.port = ntohs(clientAddr.sin_port);
+	//TODO Prevent duplicates
+
+	setFDStatus(clientSockfd, 2); //client has connected
 	
-	if(peerToFD.find(thePeerInfo) != peerToFD.end())
-	{
-		//client already connected
-		close(clientSockfd);
-		std::cout << "already connected so not allowing a second connection" << std::endl;
-		continue;
-	}
-	socketStatus[clientSockfd] = 2; //client has connected
-	peerToFD[thePeerInfo] = clientSockfd;
-	
-	// add the socket into the socket set
-	FD_SET(clientSockfd, &tmpFds);
 	return clientSockfd;
 }
 
 bool Client::isFDPeer(int fd)
 {
-	// this needs to be implemented
-	return false;
+	if(socketStatus.find(fd) != socketStatus.end())
+		return true;
+	else
+		return false;
+	
 }
 
 int Client::getFDStatus(int fd)
 {
-	// this needs to be implemented
-	return -1;
+	if(socketStatus.find(fd) != socketStatus.end())
+		return socketStatus[fd];
+	else
+		return -1;
+}
+
+void Client::setFDStatus(int fd, int status)
+{
+		socketStatus[fd] = status;
+}
+
+int Client::getFDofPeer(PeerID pi, std::vector<PeerFD>& pfd)
+{
+	for(int i=0; i < pfd.size(); i++)
+	{
+		if(pfd[i].pi.ip.compare(pi.ip) == 0 && pfd[i].pi.port==pi.port)
+			return pfd[i].fd;
+	}
+	return -1; //if not found, return -1
 }
