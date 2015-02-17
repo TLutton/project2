@@ -176,7 +176,8 @@ HandShake Client::receiveHandShake(int fd)
 
 void Client::sendHandShake(int fd)
 {
-    ConstBufferPtr hj = handjob.encode();
+    //ConstBufferPtr hj = handjob.encode();
+	ConstBufferPtr hj = clientHandShake.encode(); // tommy
     const char* hjc = reinterpret_cast<const char*>(hj->buf());
     std::cout << "sending handshake back, socket status is now 3" << std::endl;
 	//SEEND HANDSHAKE BACK
