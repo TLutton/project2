@@ -123,7 +123,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 		
 		for(int fd = 0; fd <= maxSockfd; fd++)
 		{
-			std::cout << " fd: " << fd << " maxSockfd: " << maxSockfd << std::endl;
+		//	std::cout << " fd: " << fd << " maxSockfd: " << maxSockfd << std::endl;
 			if(shouldUpdateTracker())
 				sendTrackerRequest();
 		    if(FD_ISSET(fd, &readFds))
@@ -200,7 +200,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 		    }
 		    else
 		    {
-		    	std::cout<<"Why did i get here? #2" << std::endl;
+		    //	std::cout<<"Why did i get here? #2" << std::endl;
 		    }
 			
 		} //end of fd loop
