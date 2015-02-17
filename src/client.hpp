@@ -63,23 +63,6 @@
 namespace sbt {
 namespace msg {
 
-struct cmpPeer  //comparator for peer info
-{
-    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
-    {
-        int str = a.ip.compare(b.ip);
-        if(str < 0)
-        	return true;
-        else if (str > 0)
-        	return false;
-        else if(a.port < b.port)
-        {
-        	return true;
-        }
-        else
-        	return false;
-    }
-};
 
 
 class Client
@@ -132,6 +115,23 @@ private:
   int uploaded, downloaded;
   std::string event;
   
+struct cmpPeer  //comparator for peer info
+{
+    bool operator()(const PeerInfo& a, const PeerInfo& b) const 
+    {
+        int str = a.ip.compare(b.ip);
+        if(str < 0)
+        	return true;
+        else if (str > 0)
+        	return false;
+        else if(a.port < b.port)
+        {
+        	return true;
+        }
+        else
+        	return false;
+    }
+};
 };
 
 } // namespace sbt
