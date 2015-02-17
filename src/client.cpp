@@ -210,6 +210,19 @@ Client::Client(const std::string& port1, const std::string& torrent)
 									socketStatus[fd] = 10;
 								break;
 							}
+							case MSG_ID_HAVE:
+							{
+								break;
+							}
+							case MSG_ID_BITFIELD:
+							{
+								break;
+							}
+							case MSG_ID_REQUEST:
+							{
+								break;
+							}
+							case MS
 						    //TODO add other cases;
 						}
 					}
@@ -293,10 +306,8 @@ MsgBase* Client::receiveMessage(int fd)
 		printf("%d", buf[i]);
 	std::cout << "socket status = " << socketStatus[fd] << std::endl;
 	std::cout << "STRLEN " << strlen(buf) << std::endl;
-	char pleadTheFifth = buf[4];
-	uint8_t typeId = (uint8_t)pleadTheFifth;
-	
-	std::cout << "msg type: " << typeId << std::endl;
+	int pleadTheFifth = buf[4];
+	std::cout << "msg type: " << pleadTheFifth<< std::endl;
 	
 	// ??????
 	// are we receiving messages correctly? 
