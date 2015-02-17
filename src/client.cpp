@@ -47,11 +47,11 @@ Client::Client(const std::string& port, const std::string& torrent)
 	torrentInfo.wireDecode(ifs);
 	encodedPeer = "SIMPLEBT.TEST.PEERID";
 	
-	std::cout << "going to setup tracker request" << std::endl;
+	//std::cout << "going to setup tracker request" << std::endl;
 	setupTrackerRequest();
-	std::cout << "setup tracker request, sending it" << std::endl;
+	//std::cout << "setup tracker request, sending it" << std::endl;
     sendTrackerRequest();
-    std::cout << "sent tracker request" << std::endl;
+    //std::cout << "sent tracker request" << std::endl;
     lastCheck = time(0);
     
 	fd_set tmpFds;
@@ -99,9 +99,11 @@ Client::Client(const std::string& port, const std::string& torrent)
 		            FD_SET(childFD, &tmpFds);
 		            if(childFD > maxSockfd)
 		                maxSockfd = childFD;
+		            std::cout << "adding fd captured by listener: " << childFD << std::endl;
 		        }
 		        else if(isFDPeer(fd))
 		        {
+		        	std::cout << "looping through fd: " << fd << std::endl;
 		            if (getFDStatus(fd) == 0 || getFDStatus(fd) == 2) //TWO STATES EXPECTING A HANDSHAKE
 					{
 					    HandShake hs = receiveHandShake(fd);
@@ -113,12 +115,14 @@ Client::Client(const std::string& port, const std::string& torrent)
 					    }
 					    if(getFDStatus(fd) == 2)
 					    {
+					    	std::cout << "sending handshake to : " << fd << std::endl;
 					        sendHandShake(fd);
 					        setFDStatus(fd, 3);
 					    }
 					}
 					else if(getFDStatus(fd) >= 3) //expecting a message
 					{
+						std::cout << "FD Status == 3: Expecting Message" << std::endl;
 					    //MsgBase mb = receiveMessage(fd);
 					    MsgBase* mb	= receiveMessage(fd);
 						if(mb == NULL)
@@ -317,7 +321,7 @@ void Client::sendTrackerRequest()
 		std::cerr << "getaddrinfo: " << gai_strerror(status) << std::endl;
 		return;
 	}
-	std::cout << "resolved addrinfo" << std::endl;
+	//std::cout << "resolved addrinfo" << std::endl;
 
 	struct addrinfo* p = res;
 	if(p==0)
@@ -341,7 +345,7 @@ void Client::sendTrackerRequest()
 		perror("connect");
 		return;// 2;
 	}
-	std::cout << "connected -<3 Yingdi" << std::endl;
+	//std::cout << "connected -<3 Yingdi" << std::endl;
 	struct sockaddr_in clientAddr;
 
 	socklen_t clientAddrLen = sizeof(clientAddr);
