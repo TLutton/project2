@@ -113,6 +113,8 @@ Client::Client(const std::string& port, const std::string& torrent)
 					{
 					    //MsgBase mb = receiveMessage(fd);
 					    MsgBase* mb	= receiveMessage(fd);
+						if(mb == NULL)
+							exit(1); // not supposed to be null
 					    switch (mb->getId())
 						{
 							case MSG_ID_UNCHOKE: 
