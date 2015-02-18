@@ -119,7 +119,7 @@ private:
   //Bitfield
   void processPeerBitfield(sbt::ConstBufferPtr buf);
   std::vector<bool> ourBitField;
-  void Client::sendOurBitfield(int fd);
+  void sendOurBitfield(int fd);
 };
 
 } // namespace sbt
