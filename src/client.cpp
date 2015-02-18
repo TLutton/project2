@@ -586,14 +586,15 @@ void Client::setFDStatus(int fd, int status)
 
 
 //Bitfield
-void Client::processPeerBitfield(ConstBufferPtr& buf)
+void Client::processPeerBitfield(sbt::ConstBufferPtr buf)
 {
     std::vector<uint8_t> v = *buf;
+    std::vector<bool> b;
     for(int i = 0; i < v.size(); i++)
     {
     	uint8_t part = v[i];
     	std::cout << "part : " << part << std::endl;
-    	std::vector<bool> b;
+    	
     	for(int j = 0; j < 8; j++)
     		b[j+(i*8)] = (part >> (8-j))&1;
     }
