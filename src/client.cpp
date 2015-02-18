@@ -186,9 +186,6 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					    //MsgBase mb = receiveMessage(fd);
 					    receiveMessage(fd);
 					   
-						if(mb == NULL)
-							exit(1); // not supposed to be null
-						int mid = (int)mb->getId();
 						std::cout << "FD Status == 3: Received msg" << std::endl;
 					   
 					}
@@ -322,8 +319,8 @@ MsgBase* Client::receiveMessage(int fd)
 		case MSG_ID_BITFIELD:
 		{
 			Bitfield bf;
-			bf->decode(cnstBufPtr);
-			processPeerBitfield(bf->getBitfield());
+			bf.decode(cnstBufPtr);
+			processPeerBitfield(bf.getBitfield());
 			//send out bitfield back
 			break;
 		}
@@ -338,9 +335,6 @@ MsgBase* Client::receiveMessage(int fd)
 	    //TODO add other cases;
 	}
 		
-
-	if(mb != NULL)
-		mb->decode(cnstBufPtr); 
 	
 	return mb;
 		
