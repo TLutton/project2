@@ -117,7 +117,7 @@ private:
   std::string event;
   
   //Bitfield
-  void processPeerBitfield(ConstBufferPtr& buf);
+  void processPeerBitfield(sbt::ConstBufferPtr buf);
 };
 
 } // namespace sbt
