@@ -348,6 +348,7 @@ MsgBase* Client::receiveMessage(int fd)
 		mb = new Piece;
 	else
 		return NULL;
+	mb->setId(buf[4]);
 		
 	OBufferStream obuf;
 	obuf.write(buf, msgLength-1);
