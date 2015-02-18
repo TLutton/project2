@@ -257,7 +257,7 @@ void Client::receiveMessage(int fd)
 {
 	char* buf = (char*)malloc(5*sizeof(char));
 	int status = 0;
-	if ((status =recv(fd, buf, sizeof(buf), 0)) == -1) 
+	if ((status =recv(fd, buf, 5, 0)) == -1) 
 	{
 		perror("recv");
 		return;
