@@ -188,8 +188,10 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					   
 						if(mb == NULL)
 							exit(1); // not supposed to be null
-						std::cout << "FD Status == 3: Received msg: " << (uint8_t)mb->getId() << std::endl;
-					    switch ((uint8_t)mb->getId())
+						int mid = (int)mb->getId();
+						std::cout << "FD Status == 3: Received msg: " << mid << std::endl;
+					   
+					    switch (mid)
 						{
 							case MSG_ID_UNCHOKE: 
 							{		// 1
