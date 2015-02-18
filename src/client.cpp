@@ -274,7 +274,7 @@ void Client::receiveMessage(int fd)
 	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
 	buf = (char*)realloc(buf, msgLength+4);
-	if ((status =recv(fd, buf+5, sizeof(buf)-5, 0)) == -1) 
+	if ((status =recv(fd, buf+5, msgLength-5, 0)) == -1) 
 	{
 		perror("recv");
 		return;
