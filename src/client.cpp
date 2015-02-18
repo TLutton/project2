@@ -260,7 +260,7 @@ void Client::receiveMessage(int fd)
 	if ((status =recv(fd, buf, sizeof(buf), 0)) == -1) 
 	{
 		perror("recv");
-		return NULL;
+		return;
 	}
 	
 	std::cout << "recv size = " << status << std::endl;
@@ -277,7 +277,7 @@ void Client::receiveMessage(int fd)
 	if ((status =recv(fd, buf+5, sizeof(buf)-5, 0)) == -1) 
 	{
 		perror("recv");
-		return NULL;
+		return;
 	}
 	// ??????
 	// are we receiving messages correctly? 
@@ -334,9 +334,7 @@ void Client::receiveMessage(int fd)
 		}
 	    //TODO add other cases;
 	}
-		
-	
-	return mb;
+
 		
 }
 void Client::setupTrackerRequest()
