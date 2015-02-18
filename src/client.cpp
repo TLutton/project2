@@ -184,56 +184,13 @@ Client::Client(const std::string& port1, const std::string& torrent)
 					{
 						std::cout << "FD Status == 3: Expecting Message" << std::endl;
 					    //MsgBase mb = receiveMessage(fd);
-					    MsgBase* mb	= receiveMessage(fd);
+					    receiveMessage(fd);
 					   
 						if(mb == NULL)
 							exit(1); // not supposed to be null
 						int mid = (int)mb->getId();
-						std::cout << "FD Status == 3: Received msg: " << mid << std::endl;
+						std::cout << "FD Status == 3: Received msg" << std::endl;
 					   
-					    switch (mid)
-						{
-							case MSG_ID_UNCHOKE: 
-							{		// 1
-								if(socketStatus[fd] == 8)
-									socketStatus[fd] = 9;
-								if(socketStatus[fd] == 9)
-									socketStatus[fd] = 10;
-								break;
-							} 
-							case MSG_ID_INTERESTED:	
-							{	// 2
-								if(socketStatus[fd] == 5)
-									socketStatus[fd] = 8;
-									
-								if(socketStatus[fd] == 6)
-									socketStatus[fd] = 9;
-									
-								if(socketStatus[fd] == 7)
-									socketStatus[fd] = 10;
-								break;
-							}
-							case MSG_ID_HAVE:
-							{
-								break;
-							}
-							case MSG_ID_BITFIELD:
-							{
-								Bitfield* bf = (Bitfield*)mb;
-								processPeerBitfield(bf->getBitfield());
-								//send out bitfield back
-								break;
-							}
-							case MSG_ID_REQUEST:
-							{
-								break;
-							}
-							case MSG_ID_PIECE:
-							{
-								break;
-							}
-						    //TODO add other cases;
-						}
 					}
 					
 		        }
@@ -301,7 +258,7 @@ void Client::sendHandShake(int fd)
 // void Client::receiveMessage(int fd)
 MsgBase* Client::receiveMessage(int fd)
 {
-	char buf[5] = {0};
+	char* buf = (char*)malloc(5*sizeof(char));
 	int status = 0;
 	if ((status =recv(fd, buf, sizeof(buf), 0)) == -1) 
 	{
@@ -319,9 +276,8 @@ MsgBase* Client::receiveMessage(int fd)
 	uint32_t msgLength = ntohl((reinterpret_cast<uint32_t*>(buf))[0]);
 	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
-	char* myBuf = new char[msgLength-1]; //-1 because type was 1 byte
-	
-	if ((status =recv(fd, myBuf, msgLength-1, 0)) == -1) 
+	buf = (char*)realloc(buf, msgLength);
+	if ((status =recv(fd, buf+5, sizeof(buf)-5, 0)) == -1) 
 	{
 		perror("recv");
 		return NULL;
@@ -333,27 +289,56 @@ MsgBase* Client::receiveMessage(int fd)
 	// MsgBase is abstract, so the best that can be returned
 	// is a generic pointer.
 	
-	MsgBase* mb;
-	if(typeId == MSG_ID_UNCHOKE)
-		mb = new Unchoke;
-	else if(typeId == MSG_ID_INTERESTED)
-		mb = new Interested;
-	else if(typeId == MSG_ID_HAVE)
-		mb = new Have;
-	else if(typeId == MSG_ID_BITFIELD)
-		mb = new Bitfield;
-	else if(typeId == MSG_ID_REQUEST)
-		mb = new Request;
-	else if(typeId == MSG_ID_PIECE)
-		mb = new Piece;
-	else
-		return NULL;
-	mb->setId(buf[4]);
-		
 	OBufferStream obuf;
-	obuf.write(buf, msgLength-1);
-	
+	obuf.write(buf, msgLength);
 	ConstBufferPtr cnstBufPtr = obuf.buf();
+	
+	switch (typeId)
+	{
+		case MSG_ID_UNCHOKE: 
+		{		// 1
+			if(socketStatus[fd] == 8)
+				socketStatus[fd] = 9;
+			if(socketStatus[fd] == 9)
+				socketStatus[fd] = 10;
+			break;
+		} 
+		case MSG_ID_INTERESTED:	
+		{	// 2
+			if(socketStatus[fd] == 5)
+				socketStatus[fd] = 8;
+				
+			if(socketStatus[fd] == 6)
+				socketStatus[fd] = 9;
+				
+			if(socketStatus[fd] == 7)
+				socketStatus[fd] = 10;
+			break;
+		}
+		case MSG_ID_HAVE:
+		{
+			break;
+		}
+		case MSG_ID_BITFIELD:
+		{
+			Bitfield bf;
+			bf->decode(cnstBufPtr);
+			processPeerBitfield(bf->getBitfield());
+			//send out bitfield back
+			break;
+		}
+		case MSG_ID_REQUEST:
+		{
+			break;
+		}
+		case MSG_ID_PIECE:
+		{
+			break;
+		}
+	    //TODO add other cases;
+	}
+		
+
 	if(mb != NULL)
 		mb->decode(cnstBufPtr); 
 	
