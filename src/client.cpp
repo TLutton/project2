@@ -42,6 +42,9 @@ Client::Client(const std::string& port1, const std::string& torrent)
 {
     this->port = port1;
     this->torrent = torrent; 
+    this->ourBitField;
+    for(int i = 0; i < 24)
+    	ourBitField.push_back(false);
     //std::ifstreams (argv[2], std::ifstream::in);
 	std::ifstream ifs(torrent, std::ifstream::in);
 	torrentInfo.wireDecode(ifs);
@@ -321,6 +324,10 @@ void Client::receiveMessage(int fd)
 			Bitfield bf;
 			bf.decode(cnstBufPtr);
 			processPeerBitfield(bf.getBitfield());
+			if(socketStatus[fd] == 1)
+				socketStatus = 5;
+			if(socketStatus[fd] ==3)
+				socketStatus = 4;
 			//send out bitfield back
 			break;
 		}
@@ -590,6 +597,35 @@ void Client::processPeerBitfield(sbt::ConstBufferPtr buf)
     	std::cout << b[i];
     std::cout << std::endl;
 	
+}
+
+//Bitfield
+void Client::sendOurBitfield(int fd)
+{
+	std::vector<uint8_t> prayer;
+    int j = 0;
+    uint8_t part = 0;
+    for(int i = 0; i < ourBitField.size(); i++)
+    {
+    	part = (part << 1)&ourBitField[i];
+    	j++;
+    	if(j == 8)
+    		prayer.push_back(part);
+    }
+    ConstBufferPtr cbp = &prayer;
+	Bitfield bf;
+	bf.setBitfield(cbp);
+	ConstBufferPtr theMSG - bf->encode();
+	std::vector<uint8_t> v = *theMSG;
+	size_t size = v.size();
+	const char* msg = reinterpret_cast<const char*>(theMSG->buf());
+    std::cout << "sending bitfield back" << std::endl;
+	//SEEND HANDSHAKE BACK
+	if (send(fd, msg, size, 0) == -1) 
+	{
+		perror("send");
+		return;
+	}
 }
 /*
 int Client::getFDofPeer(PeerID pi, std::vector<PeerFD>& pfd)
