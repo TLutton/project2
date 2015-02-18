@@ -185,8 +185,10 @@ Client::Client(const std::string& port1, const std::string& torrent)
 						std::cout << "FD Status == 3: Expecting Message" << std::endl;
 					    //MsgBase mb = receiveMessage(fd);
 					    MsgBase* mb	= receiveMessage(fd);
+					   
 						if(mb == NULL)
 							exit(1); // not supposed to be null
+						std::cout << "FD Status == 3: Received msg: " << mb->getID() << std::endl;
 					    switch (mb->getId())
 						{
 							case MSG_ID_UNCHOKE: 
