@@ -611,13 +611,20 @@ void Client::sendOurBitfield(int fd)
     	if(j == 8)
     		prayer.push_back(part);
     }
+    
+    char* thePrayer = (char*)malloc(sizeof(char)*prayer.size());
+    for(int i = 0; i < prayer.size(); i++)
+    {
+    	thePrayer[i] = prayer[i];
+    }
+    
     OBufferStream obuf;
 	obuf.put(0);
-	obuf.write(prayer, prayer.size());
+	obuf.write(thePrayer, prayer.size());
 	shared_ptr<Buffer> bufNew = obuf.buf(); // obuf.get()?
 	Bitfield bf;
 	bf.setBitfield(bufNew);
-	ConstBufferPtr theMSG = bf->encode();
+	ConstBufferPtr theMSG = bf.encode();
 	std::vector<uint8_t> v = *theMSG;
 	size_t size = v.size();
 	const char* msg = reinterpret_cast<const char*>(theMSG->buf());
