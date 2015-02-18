@@ -193,7 +193,6 @@ Client::Client(const std::string& port1, const std::string& torrent)
 							{		// 1
 								if(socketStatus[fd] == 8)
 									socketStatus[fd] = 9;
-									
 								if(socketStatus[fd] == 9)
 									socketStatus[fd] = 10;
 								break;
@@ -216,6 +215,8 @@ Client::Client(const std::string& port1, const std::string& torrent)
 							}
 							case MSG_ID_BITFIELD:
 							{
+								processPeerBitfield(mb->getBitfield(), mb->getLength()-1);
+								//send out bitfield back
 								break;
 							}
 							case MSG_ID_REQUEST:
@@ -295,7 +296,7 @@ void Client::sendHandShake(int fd)
 // void Client::receiveMessage(int fd)
 MsgBase* Client::receiveMessage(int fd)
 {
-	char buf[100] = {0};
+	char buf[5] = {0};
 	int status = 0;
 	if ((status =recv(fd, buf, sizeof(buf), 0)) == -1) 
 	{
@@ -313,6 +314,13 @@ MsgBase* Client::receiveMessage(int fd)
 	uint32_t msgLength = ntohl((reinterpret_cast<uint32_t*>(buf))[0]);
 	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
+	char* myBuf = new char[msgLength-1]; //-1 because type was 1 byte
+	
+	if ((status =recv(fd, myBuf, msgLength-1, 0)) == -1) 
+	{
+		perror("recv");
+		return NULL;
+	}
 	// ??????
 	// are we receiving messages correctly? 
 	// based on call to receiveMessage(fd) in line 111, 
@@ -337,7 +345,7 @@ MsgBase* Client::receiveMessage(int fd)
 		return NULL;
 		
 	OBufferStream obuf;
-	obuf.write(buf, status);
+	obuf.write(buf, msgLength-1);
 	
 	ConstBufferPtr cnstBufPtr = obuf.buf();
 	if(mb != NULL)
@@ -575,6 +583,26 @@ void Client::setFDStatus(int fd, int status)
 		socketStatus[fd] = status;
 }
 
+
+//Bitfield
+void Client::processPeerBitfield(ConstBufferPtr& buf)
+{
+    std::vector<uint8_t> v = *buf;
+    while(int i = 0; i < v.size(); i++)
+    {
+    	uint8_t part = v[i];
+    	std::cout << "part : " << part << std::endl;
+    	std::vector<bool> b;
+    	for(int j = 0; j < 8; j++)
+    		b[j+(i*8)] = (part >> (8-j))&1;
+    }
+    
+    std::cout << " bitfield: " << std::endl;
+    for(int i = 0; i < b.size(); i++)
+    	std::cout << b[i];
+    std::cout << std::endl;
+	
+}
 /*
 int Client::getFDofPeer(PeerID pi, std::vector<PeerFD>& pfd)
 {

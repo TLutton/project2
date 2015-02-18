@@ -116,6 +116,8 @@ private:
   int uploaded, downloaded;
   std::string event;
   
+  //Bitfield
+  void processPeerBitfield(ConstBufferPtr& buf);
 };
 
 } // namespace sbt
