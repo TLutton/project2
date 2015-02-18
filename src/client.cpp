@@ -326,7 +326,10 @@ void Client::receiveMessage(int fd)
 			if(socketStatus[fd] == 1)
 				socketStatus[fd] = 5;
 			if(socketStatus[fd] ==3)
+			{
 				socketStatus[fd] = 4;
+				sendOurBitfield(fd);
+			}
 			//send out bitfield back
 			break;
 		}
