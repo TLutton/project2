@@ -581,6 +581,7 @@ void Client::processPeerBitfield(sbt::ConstBufferPtr buf)
     	{
     		std::cout<< "j: " << j << std::endl;
     		b[j+(i*8)] = (part >> (7-j))&1;
+    		std::cout<< "j: " << j << std::endl;
     	}
     }
     
