@@ -215,7 +215,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 							}
 							case MSG_ID_BITFIELD:
 							{
-								processPeerBitfield(mb->getBitfield(), mb->getLength()-1);
+								processPeerBitfield(((Bitfield*)mb)->getBitfield());
 								//send out bitfield back
 								break;
 							}
@@ -588,7 +588,7 @@ void Client::setFDStatus(int fd, int status)
 void Client::processPeerBitfield(ConstBufferPtr& buf)
 {
     std::vector<uint8_t> v = *buf;
-    while(int i = 0; i < v.size(); i++)
+    for(int i = 0; i < v.size(); i++)
     {
     	uint8_t part = v[i];
     	std::cout << "part : " << part << std::endl;
