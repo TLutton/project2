@@ -273,7 +273,7 @@ void Client::receiveMessage(int fd)
 	uint32_t msgLength = ntohl((reinterpret_cast<uint32_t*>(buf))[0]);
 	std::cout << "msg type: " << typeId << " msgLength: " << msgLength << std::endl;
 	
-	buf = (char*)realloc(buf, msgLength);
+	buf = (char*)realloc(buf, msgLength+4);
 	if ((status =recv(fd, buf+5, sizeof(buf)-5, 0)) == -1) 
 	{
 		perror("recv");
