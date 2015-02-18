@@ -42,8 +42,7 @@ Client::Client(const std::string& port1, const std::string& torrent)
 {
     this->port = port1;
     this->torrent = torrent; 
-    this->ourBitField;
-    for(int i = 0; i < 24)
+    for(int i = 0; i < 24; i++)
     	ourBitField.push_back(false);
     //std::ifstreams (argv[2], std::ifstream::in);
 	std::ifstream ifs(torrent, std::ifstream::in);
@@ -325,9 +324,9 @@ void Client::receiveMessage(int fd)
 			bf.decode(cnstBufPtr);
 			processPeerBitfield(bf.getBitfield());
 			if(socketStatus[fd] == 1)
-				socketStatus = 5;
+				socketStatus[fd] = 5;
 			if(socketStatus[fd] ==3)
-				socketStatus = 4;
+				socketStatus[fd] = 4;
 			//send out bitfield back
 			break;
 		}
