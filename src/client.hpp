@@ -109,7 +109,7 @@ private:
   //receiving data
   HandShake receiveHandShake(int fd);
   void sendHandShake(int fd);
-  MsgBase* receiveMessage(int fd);
+  void receiveMessage(int fd);
   HandShake clientHandShake;
   
   //file data

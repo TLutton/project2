@@ -253,7 +253,7 @@ void Client::sendHandShake(int fd)
 }
 
 // void Client::receiveMessage(int fd)
-MsgBase* Client::receiveMessage(int fd)
+void Client::receiveMessage(int fd)
 {
 	char* buf = (char*)malloc(5*sizeof(char));
 	int status = 0;
