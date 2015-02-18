@@ -215,7 +215,8 @@ Client::Client(const std::string& port1, const std::string& torrent)
 							}
 							case MSG_ID_BITFIELD:
 							{
-								processPeerBitfield(((Bitfield*)mb)->getBitfield());
+								Bitfield* bf = (Bitfield*)mb;
+								processPeerBitfield(bf->getBitfield());
 								//send out bitfield back
 								break;
 							}
